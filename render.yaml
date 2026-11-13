@@ -1,0 +1,19 @@
+# Render blueprint: FastAPI backend (the React app is deployed separately on Vercel)
+services:
+  - type: web
+    name: nextto-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: NEXTTO_JWT_SECRET
+        generateValue: true
+      - key: NEXTTO_QR_SECRET
+        generateValue: true
+      - key: NEXTTO_WEBHOOK_SECRET
+        generateValue: true

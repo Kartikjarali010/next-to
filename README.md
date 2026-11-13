@@ -28,3 +28,8 @@ On a phone (same Wi-Fi): open `http://<your-PC-LAN-IP>:8000` in Chrome (allow Py
 - `backend/app/ranking.py` explainable deal scoring (0.50 distance, 0.25 category, 0.15 recency, 0.10 urgency).
 - Roles live in a server-only column and travel in the signed JWT as `app_role`.
 - Demo payment: "Pay with UPI (simulated)" builds an HMAC-signed callback and sends it through the real webhook path; set `NEXTTO_PROVIDER=razorpay` plus keys for Razorpay test mode.
+
+## Hosting (demo)
+- **Backend:** Render (free) from `render.yaml` — create a Blueprint from this repo. Data is seeded on start and resets when the service restarts or redeploys (SQLite on an ephemeral disk); the free tier sleeps after idle, so the first request can take ~30-50 s.
+- **Frontend:** Vercel, project root `frontend/`. `frontend/vercel.json` proxies `/api/*` to the Render URL — edit the hostname there if your Render service is not named `nextto-api`.
+- Production would use PostgreSQL (Phase 2) instead of SQLite.
