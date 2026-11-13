@@ -94,6 +94,8 @@ CREATE TABLE IF NOT EXISTS merchants(
   lng REAL NOT NULL,
   description TEXT DEFAULT '',
   doc_note TEXT DEFAULT '',
+  hours TEXT DEFAULT '',
+  image_url TEXT,
   verification_status TEXT NOT NULL DEFAULT 'pending'
     CHECK(verification_status IN('pending','approved','rejected')),
   reject_reason TEXT,
@@ -117,6 +119,7 @@ CREATE TABLE IF NOT EXISTS deals(
   status TEXT NOT NULL DEFAULT 'draft'
     CHECK(status IN('draft','pending','active','rejected','ended')),
   reject_reason TEXT,
+  image_url TEXT,
   created_at TEXT NOT NULL,
   published_at TEXT
 );
@@ -255,10 +258,21 @@ DEFAULT_CONFIG = {
 }
 
 
+MIGRATIONS = [  # (table, column, ddl) - additive, safe to run repeatedly
+    ("merchants", "hours", "TEXT DEFAULT ''"),
+    ("merchants", "image_url", "TEXT"),
+    ("deals", "image_url", "TEXT"),
+]
+
+
 def init_db(conn: sqlite3.Connection | None = None) -> None:
     own = conn is None
     conn = conn or connect()
     conn.executescript(SCHEMA)
+    for table, col, ddl in MIGRATIONS:
+        cols = {r["name"] for r in conn.execute(f"PRAGMA table_info({table})")}
+        if col not in cols:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {ddl}")
     for k, v in DEFAULT_CONFIG.items():
         conn.execute("INSERT OR IGNORE INTO config(key,value) VALUES(?,?)", (k, json.dumps(v)))
     if own:

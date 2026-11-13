@@ -2,7 +2,7 @@ import {
   AlarmClock, ArrowLeft, ArrowRight, Bell, Banknote, CalendarDays, Camera, CheckCircle2, Clapperboard, Clock, Coffee, Croissant,
   Download, Dumbbell, Flower2, Hourglass, Inbox, Info, LayoutDashboard, List, LocateFixed, LogOut, Map as MapIcon, MapPin,
   PartyPopper, Receipt, RefreshCw, ScanLine, ScrollText, Scissors, Search, ShieldCheck, ShoppingBag, Star, Store, Tag, Ticket,
-  TrendingUp, Undo2, User, UserRound, UtensilsCrossed, Wrench, X, XCircle, LucideProps,
+  TrendingUp, Undo2, User, UserRound, UtensilsCrossed, Wrench, X, XCircle, LucideProps, Moon, Sun,
 } from "lucide-react";
 
 const MAP = {
@@ -10,7 +10,7 @@ const MAP = {
   tag: Tag, scan: ScanLine, camera: Camera, calendar: CalendarDays, store: Store, shield: ShieldCheck, refund: Undo2, payout: Banknote,
   audit: ScrollText, chart: TrendingUp, bell: Bell, receipt: Receipt, clock: Clock, hourglass: Hourglass, check: CheckCircle2, cross: XCircle,
   info: Info, party: PartyPopper, list: List, map: MapIcon, download: Download, refresh: RefreshCw, close: X, back: ArrowLeft, next: ArrowRight,
-  locate: LocateFixed, inbox: Inbox, urgent: AlarmClock,
+  locate: LocateFixed, inbox: Inbox, urgent: AlarmClock, moon: Moon, sun: Sun,
   // categories
   food: UtensilsCrossed, cafe: Coffee, bakery: Croissant, salon: Scissors, spa: Flower2, fitness: Dumbbell, retail: ShoppingBag,
   entertainment: Clapperboard, services: Wrench,

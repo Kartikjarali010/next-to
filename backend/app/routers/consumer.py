@@ -91,10 +91,29 @@ def _search(conn, lat, lng, radius_km, category, q):
     return out
 
 
+@router.get("/shops/{shop_id}")
+def shop_profile(shop_id: int, conn=Depends(get_db)):
+    """Public shopper-facing merchant profile: details, live deals and reviews (verified shops only)."""
+    m = one(conn.execute("SELECT id,name,category,address,lat,lng,description,hours,image_url FROM merchants WHERE id=? AND verification_status='approved'", (shop_id,)))
+    if not m:
+        raise not_found("Shop not found")
+    n = now_iso()
+    m["deals"] = rows(conn.execute(
+        "SELECT id,title,category,type,price,original_price,stock_remaining,ends_at,image_url FROM deals "
+        "WHERE merchant_id=? AND status='active' AND starts_at<=? AND ends_at>=? AND stock_remaining>0 ORDER BY id DESC", (shop_id, n, n)))
+    m["reviews"] = rows(conn.execute(
+        "SELECT r.rating,r.comment,r.created_at,u.name FROM reviews r JOIN users u ON u.id=r.consumer_id "
+        "WHERE r.merchant_id=? AND r.hidden=0 ORDER BY r.id DESC LIMIT 20", (shop_id,)))
+    agg = one(conn.execute("SELECT ROUND(AVG(rating),1) a, COUNT(*) c FROM reviews WHERE merchant_id=? AND hidden=0", (shop_id,)))
+    m["rating"], m["review_count"] = agg["a"], agg["c"]
+    m["redeemed_count"] = conn.execute("SELECT COUNT(*) c FROM vouchers WHERE merchant_id=? AND status='redeemed'", (shop_id,)).fetchone()["c"]
+    return m
+
+
 @router.get("/deals/{deal_id}")
 def deal_detail(deal_id: int, conn=Depends(get_db)):
     d = one(conn.execute(
-        "SELECT d.*, m.name merchant_name, m.address merchant_address, m.lat, m.lng, m.description merchant_description "
+        "SELECT d.*, m.name merchant_name, m.address merchant_address, m.lat, m.lng, m.description merchant_description, m.image_url merchant_image, m.hours merchant_hours "
         "FROM deals d JOIN merchants m ON m.id=d.merchant_id WHERE d.id=? AND d.status='active'", (deal_id,)))
     if not d:
         raise not_found("Deal not found")

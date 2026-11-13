@@ -1,3 +1,4 @@
+import { Photo } from "../../images";
 import { Ic } from "../../icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -24,7 +25,7 @@ export default function Deals() {
         data.map((d) => (
           <div key={d.id} className="card stack-s">
             <div className="row">
-              <div className="thumb" style={{ width: 44, height: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", background: CATEGORY_BG[d.category] }}><Ic n={CATEGORY_ICON[d.category] || "tag"} size={22} /></div>
+              <Photo src={d.image_url} category={d.category} alt={d.title} className="mini-photo" />
               <div className="grow"><div className="bold">{d.title}</div><div className="small muted">{d.type} · {d.category}</div></div>
               <Badge s={d.status} />
             </div>
