@@ -26,7 +26,7 @@ export default function Refunds() {
       <PageHead title="Refunds" />
       <Tabs value={tab} onChange={setTab} options={["requested", "approved", "processed", "rejected", "all"]} />
       {note && <div className="alert warn"><b>Payment provider unavailable.</b> {note}</div>}
-      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="↩️">No {tab} refunds</Empty> :
+      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="refund">No {tab} refunds</Empty> :
         <div className="table-wrap"><table className="table">
           <thead><tr><th>#</th><th>Customer</th><th>Deal</th><th>Amount</th><th>Reason</th><th>Requested</th><th>Status</th><th /></tr></thead>
           <tbody>{data.map((r) => (

@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, fmtDate, money } from "../../api";
@@ -19,11 +20,11 @@ export default function Deals() {
     <div className="stack">
       <div className="row between"><h1>My deals</h1><Link to="/merchant/deals/new" className="btn sm">+ New deal</Link></div>
       <div className="alert warn small">Editing a live deal sends it back to <b>pending</b> for re-approval.</div>
-      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="🏷️">No deals yet. Create your first one!</Empty> :
+      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="tag">No deals yet. Create your first one!</Empty> :
         data.map((d) => (
           <div key={d.id} className="card stack-s">
             <div className="row">
-              <div className="thumb" style={{ width: 44, height: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", background: CATEGORY_BG[d.category] }}>{CATEGORY_ICON[d.category]}</div>
+              <div className="thumb" style={{ width: 44, height: 44, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", background: CATEGORY_BG[d.category] }}><Ic n={CATEGORY_ICON[d.category] || "tag"} size={22} /></div>
               <div className="grow"><div className="bold">{d.title}</div><div className="small muted">{d.type} · {d.category}</div></div>
               <Badge s={d.status} />
             </div>
@@ -31,7 +32,7 @@ export default function Deals() {
               <span><b>{money(d.price)}</b> <span className="strike">{money(d.original_price)}</span></span>
               <span>Stock {d.stock_remaining}/{d.stock_total} · sold {d.sold}</span>
             </div>
-            <div className="small muted">{fmtDate(d.starts_at)} → {fmtDate(d.ends_at)}</div>
+            <div className="small muted">{fmtDate(d.starts_at)} – {fmtDate(d.ends_at)}</div>
             {d.status === "rejected" && d.reject_reason && <div className="alert err small">Rejected: {d.reject_reason}</div>}
             <div className="row">
               <Link to={`/merchant/deals/${d.id}`} className="btn sm ghost">Edit</Link>

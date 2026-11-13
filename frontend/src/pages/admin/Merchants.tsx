@@ -18,7 +18,7 @@ export default function Merchants() {
     <div className="stack">
       <PageHead title="Merchants" />
       <Tabs value={tab} onChange={setTab} options={["pending", "approved", "rejected", "all"]} />
-      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="🏪">No {tab} merchants</Empty> :
+      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="store">No {tab} merchants</Empty> :
         <div className="stats" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))" }}>{data.map((m) => (
           <div key={m.id} className="card stack-s">
             <div className="row between"><h3 style={{ margin: 0 }}>{m.name}</h3><Badge s={m.verification_status} /></div>

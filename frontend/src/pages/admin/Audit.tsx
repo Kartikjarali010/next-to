@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useState } from "react";
 import { api, fmtDate } from "../../api";
 import { ErrorBox, Spinner, useAsync } from "../../components";
@@ -27,7 +28,7 @@ export default function Audit() {
         <select className="input" style={{ width: "auto" }} value={entity} onChange={(e) => setEntity(e.target.value)}>
           {ENTITIES.map((e) => <option key={e} value={e}>{e || "all entities"}</option>)}
         </select>
-        <button className="btn sm light" onClick={reload}>↻</button>
+        <button className="btn sm light" onClick={reload} aria-label="Refresh"><Ic n="refresh" size={14} /></button>
       </PageHead>
       <div className="small muted">Append-only record of every administrative and financial state change. Click a long value to expand.</div>
       {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> :

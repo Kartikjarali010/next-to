@@ -11,7 +11,7 @@ export default function Bookings() {
   return (
     <div className="stack">
       <h1>Bookings</h1>
-      {!days.length ? <Empty icon="📅">No upcoming bookings</Empty> : days.map((day) => (
+      {!days.length ? <Empty icon="calendar">No upcoming bookings</Empty> : days.map((day) => (
         <div key={day} className="stack-s">
           <div className="bold muted small">{fmtDay(day + "T12:00:00Z").toUpperCase()}</div>
           {groups[day].map((b) => (

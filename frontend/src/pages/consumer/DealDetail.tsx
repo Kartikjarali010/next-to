@@ -1,3 +1,4 @@
+import { Ic, Stars } from "../../icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, fmtDate, money, timeLeft } from "../../api";
 import { useAuth } from "../../auth";
@@ -11,7 +12,7 @@ export default function DealDetail() {
   const { data: d, loading, error, reload } = useAsync(() => api<any>(`/deals/${id}`), [id]);
 
   if (loading) return <Spinner />;
-  if (error) return <div className="stack"><ErrorBox error={error} retry={reload} /><Link to="/">← Back to deals</Link></div>;
+  if (error) return <div className="stack"><ErrorBox error={error} retry={reload} /><Link to="/"><Ic n="back" size={14} /> Back to deals</Link></div>;
   if (!d) return <Empty>Deal not found</Empty>;
 
   const off = Math.round((1 - d.price / d.original_price) * 100);
@@ -24,10 +25,10 @@ export default function DealDetail() {
 
   return (
     <div className="stack">
-      <Link to="/" className="small">← All deals</Link>
+      <Link to="/" className="small"><Ic n="back" size={14} /> All deals</Link>
       <div className="card stack">
         <div className="row">
-          <div className="thumb" style={{ width: 64, height: 64, borderRadius: 14, fontSize: "2rem", display: "flex", alignItems: "center", justifyContent: "center", background: CATEGORY_BG[d.category] }}>{CATEGORY_ICON[d.category]}</div>
+          <div className="thumb" style={{ width: 64, height: 64, borderRadius: 14, fontSize: "2rem", display: "flex", alignItems: "center", justifyContent: "center", background: CATEGORY_BG[d.category] }}><Ic n={CATEGORY_ICON[d.category] || "tag"} size={30} /></div>
           <div className="grow"><h1 style={{ marginBottom: 2 }}>{d.title}</h1><div className="muted small">{d.merchant_name}</div></div>
         </div>
         <div className="row wrap">
@@ -36,7 +37,7 @@ export default function DealDetail() {
         </div>
         <div className="row wrap small" style={{ gap: 6 }}>
           <span className="badge brand">{d.type === "service" ? "Appointment deal" : "Voucher deal"}</span>
-          <span className="badge">⏳ {timeLeft(d.ends_at)}</span>
+          <span className="badge"><Ic n="hourglass" size={12} /> {timeLeft(d.ends_at)}</span>
           {d.stock_remaining <= 5 && d.stock_remaining > 0 && <span className="badge warn">Only {d.stock_remaining} left</span>}
           {soldOut && <span className="badge err">Sold out</span>}
         </div>
@@ -50,7 +51,7 @@ export default function DealDetail() {
 
       {d.type === "service" && (
         <div className="card stack-s">
-          <h3>📅 Available appointment slots</h3>
+          <h3 className="row"><Ic n="calendar" size={18} /> Available appointment slots</h3>
           <div className="small muted">Buy first, then pick your slot from your voucher.</div>
           {d.slots.length === 0 ? <div className="small">No upcoming slots yet.</div> :
             <div className="chips" style={{ flexWrap: "wrap" }}>{d.slots.map((s: any) => (
@@ -60,18 +61,18 @@ export default function DealDetail() {
       )}
 
       <div className="card stack-s">
-        <h3>📍 {d.merchant_name}</h3>
+        <h3 className="row"><Ic n="pin" size={18} /> {d.merchant_name}</h3>
         <div className="small">{d.merchant_address}</div>
         {d.merchant_description && <div className="small muted">{d.merchant_description}</div>}
         <DealMap center={[d.lat, d.lng]} deals={[{ id: d.id, title: d.title, price: d.price, lat: d.lat, lng: d.lng, merchant_name: d.merchant_name }]} height={180} />
-        <a className="small" href={`https://www.google.com/maps?q=${d.lat},${d.lng}`} target="_blank" rel="noreferrer">Open in Google Maps →</a>
+        <a className="small" href={`https://www.google.com/maps?q=${d.lat},${d.lng}`} target="_blank" rel="noreferrer">Open in Google Maps <Ic n="next" size={12} /></a>
       </div>
 
       <div className="card stack-s">
         <h3>Reviews</h3>
         {d.reviews.length === 0 ? <div className="small muted">No reviews yet — reviews come only from verified redemptions.</div> :
           d.reviews.map((r: any, i: number) => (
-            <div key={i}><div className="row between"><b className="small">{r.name}</b><span>{"⭐".repeat(r.rating)}</span></div>
+            <div key={i}><div className="row between"><b className="small">{r.name}</b><span><Stars n={r.rating} /></span></div>
               {r.comment && <div className="small">{r.comment}</div>}<div className="small muted">{fmtDate(r.created_at)}</div></div>))}
       </div>
     </div>

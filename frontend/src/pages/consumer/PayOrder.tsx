@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useEffect, useState } from "react";
 import { api, money } from "../../api";
 import { useToast } from "../../components";
@@ -36,7 +37,7 @@ export default function PayOrder({ order, onUpdate }: { order: any; onUpdate: (o
         <div className="row between"><b>Order #{order.id}</b><span className="badge warn">awaiting payment</span></div>
         <div className="price">{money(order.amount)}</div>
         {left !== null && <div className={"small " + (left < 60 ? "bold" : "muted")} style={left < 60 ? { color: "var(--err)" } : undefined}>
-          {left > 0 ? `⏱ Deal reserved for you · ${mm}` : "Reservation expired — a late payment is still recoverable"}</div>}
+          {left > 0 ? <><Ic n="clock" size={14} /> Deal reserved for you · {mm}</> : "Reservation expired — a late payment is still recoverable"}</div>}
         {order.checkout?.upi_intent && <div className="small muted" style={{ wordBreak: "break-all" }}>{order.checkout.upi_intent}</div>}
       </div>
       <button className="btn block" disabled={busy} onClick={() => pay("success")}>{busy ? "Processing…" : `Pay ${money(order.amount)} with UPI (simulated)`}</button>

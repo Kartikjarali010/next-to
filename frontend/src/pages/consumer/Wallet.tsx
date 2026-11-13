@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, fmtDay, money } from "../../api";
@@ -27,16 +28,16 @@ export default function Wallet() {
         </div>
       )}
       <div className="row">{TABS.map(([label], i) => <button key={label} className={"chip " + (tab === i ? "on" : "")} onClick={() => setTab(i)}>{label}</button>)}</div>
-      {list.length === 0 ? <Empty icon="🎟️">{tab === 0 ? <>No active vouchers. <Link to="/">Find a deal</Link></> : "Nothing here yet."}</Empty> :
+      {list.length === 0 ? <Empty icon="ticket">{tab === 0 ? <>No active vouchers. <Link to="/">Find a deal</Link></> : "Nothing here yet."}</Empty> :
         list.map((x) => (
           <div key={x.id} className="card deal" onClick={() => nav(`/voucher/${x.id}`)}>
-            <div className="thumb" style={{ background: CATEGORY_BG[x.deal_type === "service" ? "salon" : "cafe"] }}>{x.deal_type === "service" ? "📅" : "🎟️"}</div>
+            <div className="thumb" style={{ background: CATEGORY_BG[x.deal_type === "service" ? "salon" : "cafe"] }}><Ic n={x.deal_type === "service" ? "calendar" : "ticket"} size={32} /></div>
             <div className="grow stack-s">
               <div className="bold">{x.deal_title}</div>
               <div className="small muted">{x.merchant_name}</div>
               <div className="row wrap small" style={{ gap: 6 }}><Badge s={x.status} />
                 {x.status === "active" && <span className="muted">valid till {fmtDay(x.valid_until)}</span>}
-                {x.booking && <span className="badge info">📅 booked</span>}</div>
+                {x.booking && <span className="badge info"><Ic n="calendar" size={12} /> booked</span>}</div>
             </div>
           </div>))}
     </div>

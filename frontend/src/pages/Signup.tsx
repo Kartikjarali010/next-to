@@ -1,3 +1,4 @@
+import { Ic } from "../icons";
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
@@ -45,7 +46,7 @@ function SignupForm({ mode }: { mode: "consumer" | "merchant" }) {
             <div className="field"><label>Latitude</label><input className="input" inputMode="decimal" value={b.lat} onChange={(e) => setB({ ...b, lat: e.target.value })} required /></div>
             <div className="field"><label>Longitude</label><input className="input" inputMode="decimal" value={b.lng} onChange={(e) => setB({ ...b, lng: e.target.value })} required /></div>
           </div>
-          <button type="button" className="btn light sm" onClick={locate}>📍 Use my current location</button>
+          <button type="button" className="btn light sm" onClick={locate}><Ic n="locate" size={16} /> Use my current location</button>
           <div className="field"><label>About your business</label><textarea className="input" value={b.description} onChange={(e) => setB({ ...b, description: e.target.value })} /></div>
           <div className="field"><label>Verification documents (GST / licence number)</label><input className="input" value={b.doc_note} onChange={(e) => setB({ ...b, doc_note: e.target.value })} /></div>
           <div className="alert info small">An admin reviews your business before you can publish deals.</div>

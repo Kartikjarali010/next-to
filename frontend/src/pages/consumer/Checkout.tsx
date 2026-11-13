@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, money, newKey } from "../../api";
@@ -44,7 +45,7 @@ export default function Checkout() {
   // ---- success
   if (order?.status === "paid") return (
     <div className="stack center">
-      <div className="hero"><div style={{ fontSize: "3rem" }}>🎉</div><h1 style={{ color: "#fff" }}>Payment confirmed</h1><div>{order.deal_title}</div></div>
+      <div className="hero"><div style={{ display: "flex", justifyContent: "center" }}><Ic n="party" size={48} /></div><h1 style={{ color: "#fff" }}>Payment confirmed</h1><div>{order.deal_title}</div></div>
       <div className="card stack-s"><div className="muted small">Your voucher is ready</div>
         <div className="voucher-code">{order.voucher?.code}</div>
         {order.voucher && <button className="btn block" onClick={() => nav(`/voucher/${order.voucher.id}`)}>Open voucher &amp; QR</button>}
@@ -63,7 +64,7 @@ export default function Checkout() {
   // ---- terminal states
   if (order && order.status !== "pending") return (
     <div className="stack center">
-      <div className="card stack-s"><div style={{ fontSize: "2.4rem" }}>{order.status === "failed" ? "❌" : "ℹ️"}</div>
+      <div className="card stack-s"><div style={{ fontSize: "2.4rem" }}>{order.status === "failed" ? <Ic n="cross" size={36} /> : <Ic n="info" size={36} />}</div>
         <h2>Order {order.status.replace(/_/g, " ")}</h2><Badge s={order.status} />
         <div className="small muted">{order.status === "refund_required" ? "Your money will be refunded automatically." : "Nothing was charged. The reserved deal was released."}</div>
         <button className="btn block" onClick={() => { key.current = newKey(); setOrder(null); }}>Try again</button>
@@ -71,12 +72,12 @@ export default function Checkout() {
     </div>
   );
 
-  if (err && resumeId) return <div className="stack"><ErrorBox error={err} /><Link to="/wallet">← Wallet</Link></div>;
+  if (err && resumeId) return <div className="stack"><ErrorBox error={err} /><Link to="/wallet"><Ic n="back" size={14} /> Wallet</Link></div>;
 
   // ---- review & pay
   return (
     <div className="stack">
-      <Link to={`/deal/${d.id}`} className="small">← Back</Link>
+      <Link to={`/deal/${d.id}`} className="small"><Ic n="back" size={14} /> Back</Link>
       <h1>Checkout</h1>
       <div className="card stack-s">
         <b>{d.title}</b><div className="small muted">{d.merchant_name}</div>

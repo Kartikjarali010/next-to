@@ -23,7 +23,7 @@ export default function Payouts() {
     <div className="stack">
       <PageHead title="Payouts"><button className="btn" disabled={busy} onClick={run}>{busy ? "Settling…" : "Run settlement"}</button></PageHead>
       <div className="alert info small">Settlement covers redeemed vouchers (refunded ones never count) plus tips, less the platform fee. Release is manual in this version.</div>
-      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="💸">No payouts yet. Redeem some vouchers, then run settlement.</Empty> :
+      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="payout">No payouts yet. Redeem some vouchers, then run settlement.</Empty> :
         <div className="table-wrap"><table className="table">
           <thead><tr><th>#</th><th>Merchant</th><th>Period</th><th>Gross</th><th>Fee</th><th>Net</th><th>Status</th><th /></tr></thead>
           <tbody>{data.map((p) => (

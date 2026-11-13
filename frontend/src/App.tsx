@@ -1,3 +1,4 @@
+import { Ic } from "./icons";
 import { ReactNode } from "react";
 import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, homeFor, useAuth } from "./auth";
@@ -40,27 +41,27 @@ function PhoneShell({ title, tabs }: { title: string; tabs: { to: string; icon: 
   const nav = useNavigate();
   return (
     <div className="phone"><div className="phone-in">
-      <div className="topbar"><span style={{ fontSize: "1.3rem" }}>📍</span><h1 className="grow">{title}</h1><button className="btn sm" onClick={() => { logout(); nav("/login"); }}>{user?.name.split(" ")[0]} · Sign out</button></div>
+      <div className="topbar"><Ic n="pin" size={22} /><h1 className="grow">{title}</h1><button className="btn sm" onClick={() => { logout(); nav("/login"); }}>{user?.name.split(" ")[0]} · Sign out</button></div>
       <div className="content"><Outlet /></div>
-      <nav className="tabbar">{tabs.map((t) => <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => (isActive ? "active" : "")}><span className="ic">{t.icon}</span>{t.label}</NavLink>)}</nav>
+      <nav className="tabbar">{tabs.map((t) => <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => (isActive ? "active" : "")}><Ic n={t.icon} size={22} />{t.label}</NavLink>)}</nav>
     </div></div>
   );
 }
 
 const ConsumerShell = () => <PhoneShell title="NextTo" tabs={[
-  { to: "/", icon: "🔍", label: "Discover", end: true }, { to: "/wallet", icon: "🎟️", label: "Wallet" },
-  { to: "/rewards", icon: "⭐", label: "Points" }, { to: "/profile", icon: "👤", label: "Profile" }]} />;
+  { to: "/", icon: "search", label: "Discover", end: true }, { to: "/wallet", icon: "ticket", label: "Wallet" },
+  { to: "/rewards", icon: "star", label: "Points" }, { to: "/profile", icon: "user", label: "Profile" }]} />;
 
 /** Merchant and admin are desktop web apps (sidebar layout); only the consumer side is a phone-width app. */
-function WebShell({ title, links }: { title: string; links: [string, string, boolean?][] }) {
+function WebShell({ title, links }: { title: string; links: [string, string, string, boolean?][] }) {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   return (
     <div className="adm">
       <aside className="adm-side">
-        <h2>{title}</h2>
-        {links.map(([to, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")}>{label}</NavLink>)}
-        <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav(loginPathFor(portalOf())); }}>🚪 Sign out ({user?.name.split(" ")[0]})</a>
+        <h2 className="row"><Ic n="pin" size={20} />{title}</h2>
+        {links.map(([to, icon, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")}><Ic n={icon} size={18} />{label}</NavLink>)}
+        <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav(loginPathFor(portalOf())); }}><Ic n="logout" size={18} /> Sign out ({user?.name.split(" ")[0]})</a>
       </aside>
       <main className="adm-main"><div className="page"><Outlet /></div></main>
     </div>
@@ -69,17 +70,17 @@ function WebShell({ title, links }: { title: string; links: [string, string, boo
 
 function MerchantShell() {
   const { user } = useAuth();
-  const dash: [string, string, boolean] = ["/merchant", "📊 Dashboard", true];
+  const dash: [string, string, string, boolean] = ["/merchant", "dashboard", "Dashboard", true];
   // applicants (not yet approved) only see the verification status screen
   if (user?.role === "merchant_applicant") {
     if (location.pathname !== "/merchant") return <Navigate to="/merchant" replace />;
-    return <WebShell title="📍 NextTo Business" links={[dash]} />;
+    return <WebShell title="NextTo Business" links={[dash]} />;
   }
-  return <WebShell title="📍 NextTo Business" links={[dash, ["/merchant/deals", "🏷️ Deals"], ["/merchant/scan", "📷 Redeem voucher"], ["/merchant/bookings", "📅 Bookings"], ["/merchant/more", "👤 Account & payouts"]]} />;
+  return <WebShell title="NextTo Business" links={[dash, ["/merchant/deals", "tag", "Deals"], ["/merchant/scan", "scan", "Redeem voucher"], ["/merchant/bookings", "calendar", "Bookings"], ["/merchant/more", "person", "Account & payouts"]]} />;
 }
 
 function AdminShell() {
-  return <WebShell title="📍 NextTo Admin" links={[["/admin", "📈 Overview", true], ["/admin/merchants", "🏪 Merchants"], ["/admin/deals", "🏷️ Deals"], ["/admin/refunds", "↩️ Refunds"], ["/admin/payouts", "💸 Payouts"], ["/admin/moderation", "🛡️ Moderation"], ["/admin/audit", "📜 Audit log"]]} />;
+  return <WebShell title="NextTo Admin" links={[["/admin", "chart", "Overview", true], ["/admin/merchants", "store", "Merchants"], ["/admin/deals", "tag", "Deals"], ["/admin/refunds", "refund", "Refunds"], ["/admin/payouts", "payout", "Payouts"], ["/admin/moderation", "shield", "Moderation"], ["/admin/audit", "audit", "Audit log"]]} />;
 }
 
 function Root() {

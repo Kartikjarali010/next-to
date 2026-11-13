@@ -1,3 +1,4 @@
+import { Ic } from "../icons";
 import { FormEvent, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { isAppMode, Portal } from "../api";
@@ -5,15 +6,15 @@ import { homeFor, useAuth } from "../auth";
 
 const PORTALS: Record<Portal, { title: string; sub: string; demos: [string, string, string][]; signup?: string; icon: string }> = {
   consumer: {
-    title: "NextTo", sub: "Deals next to you. Pay by UPI, redeem in person.", icon: "📍", signup: "/signup",
+    title: "NextTo", sub: "Deals next to you. Pay by UPI, redeem in person.", icon: "pin", signup: "/signup",
     demos: [["Demo shopper", "kartik@demo.com", "demo123"], ["Demo shopper 2", "priya@demo.com", "demo123"]],
   },
   merchant: {
-    title: "NextTo Business", sub: "Publish deals, scan vouchers, track sales.", icon: "🏪", signup: "/merchant/signup",
+    title: "NextTo Business", sub: "Publish deals, scan vouchers, track sales.", icon: "store", signup: "/merchant/signup",
     demos: [["Demo café", "cafe@demo.com", "demo123"], ["Demo salon", "salon@demo.com", "demo123"], ["Pending business", "new@demo.com", "demo123"]],
   },
   admin: {
-    title: "NextTo Admin", sub: "Approvals, refunds, payouts and audit.", icon: "🛡️",
+    title: "NextTo Admin", sub: "Approvals, refunds, payouts and audit.", icon: "shield",
     demos: [["Demo admin", "admin@nextto.dev", "admin123"]],
   },
 };
@@ -39,7 +40,7 @@ function PortalLogin({ portal }: { portal: Portal }) {
   return (
     <div className="phone"><div className="phone-in" style={{ justifyContent: "center", padding: 20 }}>
       <div className="hero center" style={{ marginBottom: 18 }}>
-        <div style={{ fontSize: "2.6rem" }}>{cfg.icon}</div>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}><Ic n={cfg.icon} size={44} /></div>
         <h1 style={{ color: "#fff" }}>{cfg.title}</h1>
         <div>{cfg.sub}</div>
       </div>
@@ -59,7 +60,7 @@ function PortalLogin({ portal }: { portal: Portal }) {
       </div>
       {portal === "consumer" && <>
         <div className="center small muted" style={{ marginTop: 10 }}><Link to="/">Browse deals without signing in</Link></div>
-        {!isAppMode() && <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download>⬇️ Download the Android app (APK)</a></div>}
+        {!isAppMode() && <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download><Ic n="download" size={14} /> Download the Android app (APK)</a></div>}
       </>}
     </div></div>
   );

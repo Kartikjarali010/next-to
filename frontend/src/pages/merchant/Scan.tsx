@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { api, fmtDate } from "../../api";
@@ -57,7 +58,7 @@ export default function Scan() {
       <h1>Redeem voucher</h1>
       {done ? (
         <div className="card stack center" style={{ background: "var(--ok-l)" }}>
-          <div style={{ fontSize: "3rem" }}>✅</div>
+          <div style={{ display: "flex", justifyContent: "center" }}><Ic n="check" size={48} /></div>
           <h2>Redeemed!</h2>
           <div className="bold">{done.deal_title}</div>
           <div className="small">Code {done.code} · {done.points_awarded} points awarded to customer</div>
@@ -71,7 +72,7 @@ export default function Scan() {
               <button className="btn light" onClick={async () => { await stop(); setCamera(false); }}>Stop camera</button>
             </div>
           ) : (
-            <button className="btn block" onClick={startCamera}>📷 Scan QR with camera</button>
+            <button className="btn block" onClick={startCamera}><Ic n="camera" size={16} /> Scan QR with camera</button>
           )}
           {camErr && <div className="alert warn small">{camErr}</div>}
           <form className="card stack" onSubmit={(e) => { e.preventDefault(); if (raw.trim()) lookup(raw.trim()); }}>

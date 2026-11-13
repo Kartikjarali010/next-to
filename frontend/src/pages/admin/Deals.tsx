@@ -18,7 +18,7 @@ export default function Deals() {
     <div className="stack">
       <PageHead title="Deals" />
       <Tabs value={tab} onChange={setTab} options={["pending", "active", "rejected", "ended", "draft", "all"]} />
-      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="🏷️">No {tab} deals</Empty> :
+      {loading ? <Spinner /> : error ? <ErrorBox error={error} retry={reload} /> : !data?.length ? <Empty icon="tag">No {tab} deals</Empty> :
         <div className="table-wrap"><table className="table">
           <thead><tr><th>Deal</th><th>Merchant</th><th>Price</th><th>Stock</th><th>Sale window</th><th>Status</th><th /></tr></thead>
           <tbody>{data.map((d) => (
@@ -28,7 +28,7 @@ export default function Deals() {
               <td>{d.merchant_name}</td>
               <td>{money(d.price)} <div className="small strike">{money(d.original_price)}</div></td>
               <td>{d.stock_remaining}/{d.stock_total}</td>
-              <td className="small">{fmtDate(d.starts_at)}<br />→ {fmtDate(d.ends_at)}</td>
+              <td className="small">{fmtDate(d.starts_at)}<br />– {fmtDate(d.ends_at)}</td>
               <td><Badge s={d.status} /></td>
               <td>{d.status === "pending" && <div className="row"><button className="btn sm" onClick={() => decide(d.id, "approve")}>Approve</button><button className="btn sm danger" onClick={() => setRej(d)}>Reject</button></div>}</td>
             </tr>))}</tbody>

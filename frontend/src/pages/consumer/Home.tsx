@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { InstallBanner } from "../../install";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
@@ -44,7 +45,7 @@ export default function Home() {
     <div className="stack">
       <InstallBanner />
       <div className="hero">
-        <div className="bold" style={{ fontSize: "1.1rem" }}>Deals next to you 📍</div>
+        <div className="bold" style={{ fontSize: "1.1rem" }}>Deals next to you <Ic n="pin" size={16} /></div>
         <div className="small" style={{ opacity: .9 }}>Pay by UPI · get a QR voucher · redeem in person</div>
         <input className="input" style={{ marginTop: 10 }} placeholder="Search cafés, salons, cakes…" value={q} onChange={(e) => setQ(e.target.value)} />
       </div>
@@ -62,7 +63,7 @@ export default function Home() {
 
       <div className="chips">
         <span className={"chip " + (!cat ? "on" : "")} onClick={() => setCat("")}>All</span>
-        {(meta.data?.categories || []).map((c) => <span key={c} className={"chip " + (cat === c ? "on" : "")} onClick={() => setCat(c)}>{CATEGORY_ICON[c]} {c}</span>)}
+        {(meta.data?.categories || []).map((c) => <span key={c} className={"chip " + (cat === c ? "on" : "")} onClick={() => setCat(c)}><Ic n={CATEGORY_ICON[c]} size={14} /> {c}</span>)}
       </div>
 
       <div className="row between">
@@ -70,8 +71,8 @@ export default function Home() {
           {[1, 2, 5, 10].map((k) => <option key={k} value={k}>Within {k} km</option>)}
         </select>
         <div className="row" style={{ gap: 6 }}>
-          <button className={"btn sm " + (view === "list" ? "" : "light")} onClick={() => setView("list")}>☰ List</button>
-          <button className={"btn sm " + (view === "map" ? "" : "light")} onClick={() => setView("map")}>🗺️ Map</button>
+          <button className={"btn sm " + (view === "list" ? "" : "light")} onClick={() => setView("list")}><Ic n="list" size={14} /> List</button>
+          <button className={"btn sm " + (view === "map" ? "" : "light")} onClick={() => setView("map")}><Ic n="map" size={14} /> Map</button>
         </div>
       </div>
 
@@ -79,7 +80,7 @@ export default function Home() {
       {res.error && <ErrorBox error={res.error} retry={res.reload} />}
       {r && !res.loading && <>
         {r.widened && <div className="alert info small">No deals within {radius} km, so we widened the search to {r.radius_km} km.</div>}
-        {r.deals.length === 0 ? <Empty icon="🔎">No deals found. Try another category or area.</Empty> :
+        {r.deals.length === 0 ? <Empty icon="search">No deals found. Try another category or area.</Empty> :
           view === "map"
             ? <DealMap center={[r.origin.lat, r.origin.lng]} deals={r.deals} />
             : <div className="stack">{r.deals.map((d) => <DealCard key={d.id} d={d} />)}</div>}

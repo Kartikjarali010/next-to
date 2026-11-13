@@ -1,3 +1,4 @@
+import { Ic } from "./icons";
 import { useEffect, useState } from "react";
 
 let deferred: any = null;
@@ -23,7 +24,7 @@ export function InstallBanner() {
       <div className="grow"><b>Install the NextTo app</b>
         <div className="small muted">{ios ? "Tap Share, then “Add to Home Screen”." : "Opens full screen, like a real app."}</div></div>
       {deferred && <button className="btn sm" onClick={async () => { deferred.prompt(); await deferred.userChoice; deferred = null; listeners.forEach((l) => l()); }}>Install</button>}
-      <button className="btn sm light" onClick={close} aria-label="Dismiss">✕</button>
+      <button className="btn sm light" onClick={close} aria-label="Dismiss"><Ic n="close" size={16} /></button>
     </div>
   );
 }

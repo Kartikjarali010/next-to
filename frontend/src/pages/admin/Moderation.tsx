@@ -1,3 +1,4 @@
+import { Stars } from "../../icons";
 import { api, fmtDay } from "../../api";
 import { Badge, ErrorBox, Spinner, useAsync, useToast } from "../../components";
 import { PageHead } from "../../components/adminui";
@@ -25,7 +26,7 @@ export default function Moderation() {
           <thead><tr><th>Customer</th><th>Merchant</th><th>Rating</th><th>Comment</th><th>Date</th><th /></tr></thead>
           <tbody>{rv.data?.map((r) => (
             <tr key={r.id}>
-              <td>{r.consumer_name}</td><td>{r.merchant_name}</td><td>{"★".repeat(r.rating)}</td><td>{r.comment || "—"}</td><td className="small">{fmtDay(r.created_at)}</td>
+              <td>{r.consumer_name}</td><td>{r.merchant_name}</td><td><Stars n={r.rating} /></td><td>{r.comment || "—"}</td><td className="small">{fmtDay(r.created_at)}</td>
               <td>{r.hidden ? <span className="badge">hidden</span> : <button className="btn sm danger" onClick={() => hide(r.id)}>Hide</button>}</td>
             </tr>))}
             {!rv.data?.length && <tr><td colSpan={6} className="muted center">No reviews</td></tr>}</tbody>

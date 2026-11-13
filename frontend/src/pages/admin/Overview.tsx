@@ -1,3 +1,4 @@
+import { Ic } from "../../icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api, money } from "../../api";
@@ -31,7 +32,7 @@ export default function Overview() {
   ];
   return (
     <div className="stack">
-      <PageHead title="Overview"><button className="btn sm light" onClick={reload}>↻ Refresh</button></PageHead>
+      <PageHead title="Overview"><button className="btn sm light" onClick={reload}><Ic n="refresh" size={14} /> Refresh</button></PageHead>
       <div className="stats">{tiles.map(([l, v]) => <div key={l} className="stat"><b>{v}</b><span>{l}</span></div>)}</div>
       <h2>Needs attention</h2>
       <div className="stats">{queues.map(([l, n, to]) => (
