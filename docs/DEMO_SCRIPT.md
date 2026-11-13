@@ -2,7 +2,7 @@
 
 **Before you start:** run `run.bat` (or the server is already up). Open `http://localhost:8000` on the laptop. On your phone (same Wi-Fi), open `http://192.168.0.3:8000` in Chrome and allow Python through the Windows firewall if asked. To reset the data, stop the server, delete `backend/nextto.db*` and start it again.
 
-Use three browser windows or profiles: **Shopper** (phone-width), **Merchant** (phone-width), **Admin** (wide). The login page has one-tap demo chips.
+Use three browser windows or profiles: **Shopper** (phone-width, or Chrome on your phone), **Merchant** (desktop web), **Admin** (desktop web). The login page has one-tap demo chips.
 
 | # | Who | Do this | Say / show |
 |---|---|---|---|

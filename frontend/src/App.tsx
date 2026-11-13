@@ -50,30 +50,35 @@ const ConsumerShell = () => <PhoneShell title="NextTo" tabs={[
   { to: "/", icon: "🔍", label: "Discover", end: true }, { to: "/wallet", icon: "🎟️", label: "Wallet" },
   { to: "/rewards", icon: "⭐", label: "Points" }, { to: "/profile", icon: "👤", label: "Profile" }]} />;
 
-function MerchantShell() {
-  const { user } = useAuth();
-  const dash = { to: "/merchant", icon: "📊", label: "Dashboard", end: true };
-  // applicants (not yet approved) only see the verification status screen
-  const tabs = user?.role === "merchant_applicant" ? [dash] : [dash, { to: "/merchant/deals", icon: "🏷️", label: "Deals" },
-    { to: "/merchant/scan", icon: "📷", label: "Redeem" }, { to: "/merchant/bookings", icon: "📅", label: "Bookings" }, { to: "/merchant/more", icon: "☰", label: "More" }];
-  if (user?.role === "merchant_applicant" && location.pathname !== "/merchant") return <Navigate to="/merchant" replace />;
-  return <PhoneShell title="NextTo Business" tabs={tabs} />;
-}
-
-function AdminShell() {
+/** Merchant and admin are desktop web apps (sidebar layout); only the consumer side is a phone-width app. */
+function WebShell({ title, links }: { title: string; links: [string, string, boolean?][] }) {
   const { user, logout } = useAuth();
   const nav = useNavigate();
-  const links: [string, string, boolean?][] = [["/admin", "📈 Overview", true], ["/admin/merchants", "🏪 Merchants"], ["/admin/deals", "🏷️ Deals"], ["/admin/refunds", "↩️ Refunds"], ["/admin/payouts", "💸 Payouts"], ["/admin/moderation", "🛡️ Moderation"], ["/admin/audit", "📜 Audit log"]];
   return (
     <div className="adm">
       <aside className="adm-side">
-        <h2>📍 NextTo Admin</h2>
+        <h2>{title}</h2>
         {links.map(([to, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")}>{label}</NavLink>)}
         <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav("/login"); }}>🚪 Sign out ({user?.name.split(" ")[0]})</a>
       </aside>
-      <main className="adm-main"><Outlet /></main>
+      <main className="adm-main"><div className="page"><Outlet /></div></main>
     </div>
   );
+}
+
+function MerchantShell() {
+  const { user } = useAuth();
+  const dash: [string, string, boolean] = ["/merchant", "📊 Dashboard", true];
+  // applicants (not yet approved) only see the verification status screen
+  if (user?.role === "merchant_applicant") {
+    if (location.pathname !== "/merchant") return <Navigate to="/merchant" replace />;
+    return <WebShell title="📍 NextTo Business" links={[dash]} />;
+  }
+  return <WebShell title="📍 NextTo Business" links={[dash, ["/merchant/deals", "🏷️ Deals"], ["/merchant/scan", "📷 Redeem voucher"], ["/merchant/bookings", "📅 Bookings"], ["/merchant/more", "👤 Account & payouts"]]} />;
+}
+
+function AdminShell() {
+  return <WebShell title="📍 NextTo Admin" links={[["/admin", "📈 Overview", true], ["/admin/merchants", "🏪 Merchants"], ["/admin/deals", "🏷️ Deals"], ["/admin/refunds", "↩️ Refunds"], ["/admin/payouts", "💸 Payouts"], ["/admin/moderation", "🛡️ Moderation"], ["/admin/audit", "📜 Audit log"]]} />;
 }
 
 function Root() {

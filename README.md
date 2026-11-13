@@ -1,6 +1,6 @@
 # NextTo — hyperlocal deals marketplace
 
-React (Vite, TypeScript) front end + FastAPI + SQLite back end. Consumer and merchant screens are mobile-first (open the site on a phone in Chrome and it fills the screen; on a desktop it shows as a phone-width column). The admin dashboard is a wide responsive layout.
+React (Vite, TypeScript) front end + FastAPI + SQLite back end. The consumer side is mobile-first (open the site on a phone in Chrome and it fills the screen; on a desktop it shows as a phone-width column). The merchant and admin sides are desktop web apps with a sidebar layout.
 
 ## Run
     run.bat            # builds the web app, starts everything on http://localhost:8000
