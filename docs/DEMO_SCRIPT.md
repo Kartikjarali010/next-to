@@ -34,7 +34,7 @@
 | 4 | Merchant | Sign out, then **Demo cafe** > **Deals** > **+ New deal**. Fill the form and **Save & submit**. | The deal is **pending** and invisible to shoppers. A merchant cannot make a deal live. |
 | 5 | Admin | **Deals** > approve it. | Only the admin can set a deal active. Editing a live deal sends it back for review. |
 | 6 | Shopper | Open the new deal > **Buy now**. Optionally spend reward points. Press **Pay with UPI**, then **Pay with UPI (simulated)**. | Stock is **reserved for 10 minutes**. The order becomes paid **only through a signed webhook**. The idempotency key means a double tap cannot create two orders. |
-| 7 | Shopper | **Wallet** > open the voucher. Then open the deal and tap the shop name. | A **signed QR** plus the code. It works once. The **shop profile** shows photo, hours, rating, live deals, map and verified reviews. |
+| 7 | Shopper | **Wallet** > open the voucher. | A **signed QR** plus the code. It works once. |
 | 8 | Merchant | **Redeem voucher** > type the code (or **Scan QR with camera**) > **Check voucher** > **Redeem**. Then scan the same code again. | The shopper's voucher flips to **Redeemed** by itself. The second scan is refused (**already redeemed**). Points are awarded at redemption. |
 | 9 | Shopper | Open the redeemed voucher and leave a **review and tip**; pay the tip. | One review per redeemed voucher; a tip is just another payment. |
 | 10 | Admin | **Refunds** > decide Leah's gym request: approve, or reject with a reason. | The voucher was frozen as `refund_pending`, so it could not be used meanwhile. |
@@ -46,7 +46,6 @@
 - **Wrong amount:** Demo controls > **wrong amount**. No voucher is issued and the payment is refunded automatically.
 - **Payment failed:** Demo controls > **failed**. The reserved stock is released.
 - **Expiry:** an unpaid order older than 10 minutes expires and the stock comes back (Admin > Overview > **Run expiry**).
-- **Dark mode / splash:** tap the sun/moon button in the top bar to switch theme; close and reopen the Android app to show the splash screen.
 - **Role separation:** try Kartik's login on `/merchant/login`. The server refuses it.
 
 ## 3. Short version (3 minutes)

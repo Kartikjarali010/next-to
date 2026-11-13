@@ -2,8 +2,7 @@ import { Ic, Stars } from "../../icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, fmtDate, money, timeLeft } from "../../api";
 import { useAuth } from "../../auth";
-import { Empty, ErrorBox, Spinner, useAsync } from "../../components";
-import { Photo } from "../../images";
+import { CATEGORY_BG, CATEGORY_ICON, Empty, ErrorBox, Spinner, useAsync } from "../../components";
 import DealMap from "./DealMap";
 
 export default function DealDetail() {
@@ -28,10 +27,9 @@ export default function DealDetail() {
     <div className="stack">
       <Link to="/" className="small"><Ic n="back" size={14} /> All deals</Link>
       <div className="card stack">
-        <Photo src={d.image_url} category={d.category} alt={d.title} className="deal-hero" />
-        <div>
-          <h1 style={{ marginBottom: 2 }}>{d.title}</h1>
-          <Link to={`/shop/${d.merchant_id}`} className="small row" style={{ gap: 4 }}><Ic n="store" size={14} /> {d.merchant_name} <Ic n="next" size={12} /></Link>
+        <div className="row">
+          <div className="thumb" style={{ width: 64, height: 64, borderRadius: 14, fontSize: "2rem", display: "flex", alignItems: "center", justifyContent: "center", background: CATEGORY_BG[d.category] }}><Ic n={CATEGORY_ICON[d.category] || "tag"} size={30} /></div>
+          <div className="grow"><h1 style={{ marginBottom: 2 }}>{d.title}</h1><div className="muted small">{d.merchant_name}</div></div>
         </div>
         <div className="row wrap">
           <span className="price" style={{ fontSize: "1.6rem" }}>{money(d.price)}</span><span className="strike">{money(d.original_price)}</span>
@@ -67,9 +65,7 @@ export default function DealDetail() {
         <div className="small">{d.merchant_address}</div>
         {d.merchant_description && <div className="small muted">{d.merchant_description}</div>}
         <DealMap center={[d.lat, d.lng]} deals={[{ id: d.id, title: d.title, price: d.price, lat: d.lat, lng: d.lng, merchant_name: d.merchant_name }]} height={180} />
-        {d.merchant_hours && <div className="small"><Ic n="clock" size={14} /> {d.merchant_hours}</div>}
-        <div className="row wrap"><Link className="btn sm ghost" to={`/shop/${d.merchant_id}`}><Ic n="store" size={14} /> View shop profile</Link>
-        <a className="small" href={`https://www.google.com/maps?q=${d.lat},${d.lng}`} target="_blank" rel="noreferrer">Open in Google Maps <Ic n="next" size={12} /></a></div>
+        <a className="small" href={`https://www.google.com/maps?q=${d.lat},${d.lng}`} target="_blank" rel="noreferrer">Open in Google Maps <Ic n="next" size={12} /></a>
       </div>
 
       <div className="card stack-s">

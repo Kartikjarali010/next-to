@@ -18,7 +18,7 @@ On a phone (same Wi-Fi): open `http://<your-PC-LAN-IP>:8000` in Chrome (allow Py
 | Admin | admin@nextto.dev | admin123 |
 
 ## Tests
-    cd backend && python -m pytest tests -q          # 81 tests
+    cd backend && python -m pytest tests -q          # 74 tests
     python scripts/e2e_demo.py                        # 21-step journey against the running server
 
 ## Architecture (see context.md and docs/)
@@ -44,9 +44,3 @@ Download: https://nextto.vercel.app/NextTo.apk (also `downloads/NextTo.apk` in t
 | Merchant | `/merchant` (sign-in at `/merchant/login`) | merchant and pending-merchant accounts | desktop web only |
 | Admin | `/admin` (sign-in at `/admin/login`, not linked anywhere) | admin accounts | desktop web only |
 Each sign-in page sends its portal to the API, which rejects other roles (HTTP 403) after the password check. Every portal keeps its own session, so all three can be signed in at once in the same browser.
-
-## Features added in the final polish
-- **Real photos** on every deal and shop (stock photos from Pexels, credited in `frontend/public/img/CREDITS.md`); merchants pick a photo from a built-in library or paste an https link.
-- **Shopper-facing shop profile** at `/shop/<id>`: cover photo, about text, opening hours, verified badge, rating, live deals, map and verified reviews. Merchants edit it under More > Business profile.
-- **Branded splash screen** (web, shown once per session; the Android app has a matching native launch screen).
-- **Dark mode**: follows the device setting until you tap the sun/moon button; the choice is remembered.

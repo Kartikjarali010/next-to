@@ -1,4 +1,3 @@
-import { PhotoPicker } from "../../images";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, fmtDate } from "../../api";
@@ -41,7 +40,7 @@ export default function DealForm() {
   const [status, setStatus] = useState<string>("");
   const [f, setF] = useState({
     title: "", description: "", category: "cafe", type: "voucher", price: "", original_price: "", stock_total: "20",
-    starts_at: toLocal(new Date().toISOString()), ends_at: toLocal(new Date(Date.now() + 7 * 864e5).toISOString()), redeem_window_days: "30", image_url: "",
+    starts_at: toLocal(new Date().toISOString()), ends_at: toLocal(new Date(Date.now() + 7 * 864e5).toISOString()), redeem_window_days: "30",
   });
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -51,7 +50,7 @@ export default function DealForm() {
     if (d) {
       setStatus(d.status);
       setF({ title: d.title, description: d.description || "", category: d.category, type: d.type, price: String(d.price), original_price: String(d.original_price),
-        stock_total: String(d.stock_total), starts_at: toLocal(d.starts_at), ends_at: toLocal(d.ends_at), redeem_window_days: String(d.redeem_window_days), image_url: d.image_url || "" });
+        stock_total: String(d.stock_total), starts_at: toLocal(d.starts_at), ends_at: toLocal(d.ends_at), redeem_window_days: String(d.redeem_window_days) });
     }
   }, [all.data, id]);
 
@@ -61,7 +60,7 @@ export default function DealForm() {
     setErr(""); setBusy(true);
     try {
       const body = { ...f, price: parseFloat(f.price), original_price: parseFloat(f.original_price), stock_total: parseInt(f.stock_total),
-        redeem_window_days: parseInt(f.redeem_window_days), starts_at: toIso(f.starts_at), ends_at: toIso(f.ends_at), image_url: f.image_url || null };
+        redeem_window_days: parseInt(f.redeem_window_days), starts_at: toIso(f.starts_at), ends_at: toIso(f.ends_at) };
       if (isNaN(body.price) || isNaN(body.original_price) || isNaN(body.stock_total)) throw new Error("Enter valid price, original price and stock");
       const saved = editing ? await api<any>(`/merchant/deals/${id}`, { method: "PUT", body }) : await api<any>("/merchant/deals", { body });
       if (submit) { await api(`/merchant/deals/${saved.id}/submit`, { method: "POST", body: {} }); toast("Submitted for approval"); }
@@ -96,7 +95,6 @@ export default function DealForm() {
         </div>
         <div className="field"><label>Sale starts</label><input className="input" type="datetime-local" value={f.starts_at} onChange={set("starts_at")} required /></div>
         <div className="field"><label>Sale ends</label><input className="input" type="datetime-local" value={f.ends_at} onChange={set("ends_at")} required /></div>
-        <div className="field"><label>Deal photo</label><PhotoPicker value={f.image_url} category={f.category} onChange={(v) => setF({ ...f, image_url: v })} /></div>
         {f.type === "service" && !editing && <div className="alert info small">Save the draft first, then add appointment slots.</div>}
         {err && <div className="alert err">{err}</div>}
         <button className="btn light block" disabled={busy}>{busy ? "Saving…" : "Save draft"}</button>

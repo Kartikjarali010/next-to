@@ -3,7 +3,6 @@ import { FormEvent, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { isAppMode, Portal } from "../api";
 import { homeFor, useAuth } from "../auth";
-import { ThemeToggle } from "../theme";
 
 const PORTALS: Record<Portal, { title: string; sub: string; demos: [string, string, string][]; signup?: string; icon: string }> = {
   consumer: {
@@ -59,7 +58,6 @@ function PortalLogin({ portal }: { portal: Portal }) {
           {cfg.demos.map(([label, em, pw]) => <button key={em} type="button" className="chip" onClick={() => submit(undefined, em, pw)}>{label}</button>)}
         </div>
       </div>
-      <div className="center" style={{ marginTop: 10 }}><ThemeToggle className="btn sm light" label /></div>
       {portal === "consumer" && <>
         <div className="center small muted" style={{ marginTop: 10 }}><Link to="/">Browse deals without signing in</Link></div>
         {!isAppMode() && <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download><Ic n="download" size={14} /> Download the Android app (APK)</a></div>}
