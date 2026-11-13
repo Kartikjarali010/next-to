@@ -36,3 +36,11 @@ On a phone (same Wi-Fi): open `http://<your-PC-LAN-IP>:8000` in Chrome (allow Py
 
 ## Android app (APK)
 Download: https://nextto.vercel.app/NextTo.apk (also `downloads/NextTo.apk` in this repo). Android will ask to allow installs from this source. It is a debug-signed Capacitor wrapper that opens the hosted app, so it needs internet. Rebuild: `cd android-app && npm install && npx cap sync android`, then in `android-app/android` run `gradlew assembleDebug` (Java 21, Android SDK; set `sdk.dir` in `local.properties`). The shopper web app is also an installable PWA: open the site in Chrome and tap **Install app**.
+
+## Portals (who can sign in where)
+| Portal | Address | Accepts | Sessions |
+|---|---|---|---|
+| Shopper (default) | `/` | consumer accounts only | phone-width layout; the only side in the Android app and installed PWA |
+| Merchant | `/merchant` (sign-in at `/merchant/login`) | merchant and pending-merchant accounts | desktop web only |
+| Admin | `/admin` (sign-in at `/admin/login`, not linked anywhere) | admin accounts | desktop web only |
+Each sign-in page sends its portal to the API, which rejects other roles (HTTP 403) after the password check. Every portal keeps its own session, so all three can be signed in at once in the same browser.

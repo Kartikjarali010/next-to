@@ -2,7 +2,7 @@
 
 **Before you start:** run `run.bat` (or the server is already up). Open `http://localhost:8000` on the laptop. On your phone (same Wi-Fi), open `http://192.168.0.3:8000` in Chrome and allow Python through the Windows firewall if asked. To reset the data, stop the server, delete `backend/nextto.db*` and start it again.
 
-Use three browser windows or profiles: **Shopper** (phone-width, or Chrome on your phone), **Merchant** (desktop web), **Admin** (desktop web). The login page has one-tap demo chips.
+Use three browser windows: **Shopper** at `/` (phone-width, or the Android app / installed PWA), **Merchant** at `/merchant` (desktop web) and **Admin** at `/admin` (desktop web, keep this link private). Each has its own sign-in page with one-tap demo chips, accepts only its own role, and keeps its own session, so all three can be signed in side by side in one browser. The Android app and installed PWA open only the shopper side.
 
 | # | Who | Do this | Say / show |
 |---|---|---|---|
