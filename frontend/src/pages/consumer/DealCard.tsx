@@ -1,12 +1,12 @@
 import { Ic } from "../../icons";
 import { useNavigate } from "react-router-dom";
 import { km, money, timeLeft } from "../../api";
-import { CATEGORY_BG, CATEGORY_ICON } from "../../components";
+import { Photo } from "../../images";
 
 export interface DealLite {
   id: number; title: string; category: string; type: string; price: number; original_price: number;
   stock_remaining: number; ends_at: string; merchant_name: string; rating?: number | null; review_count?: number;
-  distance_m?: number; lat: number; lng: number;
+  distance_m?: number; lat: number; lng: number; image_url?: string | null; merchant_id?: number;
 }
 
 export default function DealCard({ d }: { d: DealLite }) {
@@ -15,7 +15,7 @@ export default function DealCard({ d }: { d: DealLite }) {
   const hoursLeft = (new Date(d.ends_at).getTime() - Date.now()) / 3600000;
   return (
     <div className="card deal" onClick={() => nav(`/deal/${d.id}`)} role="link">
-      <div className="thumb" style={{ background: CATEGORY_BG[d.category] || "#e2e8f0" }}><Ic n={CATEGORY_ICON[d.category] || "tag"} size={34} /></div>
+      <Photo src={d.image_url} category={d.category} alt={d.title} className="deal-photo" />
       <div className="grow stack-s">
         <div className="bold">{d.title}</div>
         <div className="small muted">{d.merchant_name}{d.distance_m !== undefined && <> · <Ic n="pin" size={13} /> {km(d.distance_m)}</>}{d.rating ? <> · <Ic n="star" size={13} fill="currentColor" className="amber" /> {d.rating}</> : null}</div>

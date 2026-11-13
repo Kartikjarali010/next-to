@@ -16,20 +16,20 @@ def _user(conn, email, name, role):
     return cur.lastrowid
 
 
-def _merchant(conn, owner, name, cat, addr, lat, lng, desc, status="approved"):
+def _merchant(conn, owner, name, cat, addr, lat, lng, desc, status="approved", hours="", image=None):
     return conn.execute(
-        "INSERT INTO merchants(owner_id,name,category,address,lat,lng,description,doc_note,verification_status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
-        (owner, name, cat, addr, lat, lng, desc, "GST + trade licence uploaded (demo)", status, now_iso())).lastrowid
+        "INSERT INTO merchants(owner_id,name,category,address,lat,lng,description,doc_note,hours,image_url,verification_status,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+        (owner, name, cat, addr, lat, lng, desc, "GST + trade licence uploaded (demo)", hours, image, status, now_iso())).lastrowid
 
 
-def _deal(conn, mid, title, desc, cat, typ, price, orig, stock, start_h, end_h, status="active", window=30, age_h=6):
+def _deal(conn, mid, title, desc, cat, typ, price, orig, stock, start_h, end_h, status="active", window=30, age_h=6, image=None):
     n = now()
     pub = iso(n - timedelta(hours=age_h)) if status == "active" else None
     return conn.execute(
-        "INSERT INTO deals(merchant_id,title,description,category,type,price,original_price,stock_total,stock_remaining,starts_at,ends_at,redeem_window_days,status,created_at,published_at) "
-        "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO deals(merchant_id,title,description,category,type,price,original_price,stock_total,stock_remaining,starts_at,ends_at,redeem_window_days,status,image_url,created_at,published_at) "
+        "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (mid, title, desc, cat, typ, price, orig, stock, stock, iso(n + timedelta(hours=start_h)), iso(n + timedelta(hours=end_h)),
-         window, status, iso(n - timedelta(hours=age_h)), pub)).lastrowid
+         window, status, image, iso(n - timedelta(hours=age_h)), pub)).lastrowid
 
 
 def _slots(conn, deal_id, days=(1, 2, 3), hours=(11, 15, 17), cap=2):
@@ -61,24 +61,24 @@ def seed(conn):
     o_bake = _user(conn, "bakery@demo.com", "Suresh (Sweet Crumbs)", "merchant")
     o_new = _user(conn, "new@demo.com", "Farah (Spice Route)", "merchant_applicant")
 
-    cafe = _merchant(conn, o_cafe, "Brew & Bean Café", "cafe", "Kattigenahalli Main Rd, Yelahanka", 13.1163, 77.6368, "Specialty coffee and fresh sandwiches near campus.")
-    salon = _merchant(conn, o_salon, "Glow Unisex Salon", "salon", "Jakkur Main Rd, Bengaluru", 13.1122, 77.6301, "Haircuts, colour and facials.")
-    gym = _merchant(conn, o_gym, "FitZone Gym", "fitness", "Yelahanka New Town", 13.1031, 77.6012, "Strength, cardio and group classes.")
-    bake = _merchant(conn, o_bake, "Sweet Crumbs Bakery", "bakery", "Attur Layout, Yelahanka", 13.1055, 77.6190, "Cakes, breads and puffs baked daily.")
-    spice = _merchant(conn, o_new, "Spice Route Restaurant", "food", "Doddaballapur Rd, Kattigenahalli", 13.1190, 77.6410, "North Indian thali and biryani.", status="pending")
+    cafe = _merchant(conn, o_cafe, "Brew & Bean Café", "cafe", "Kattigenahalli Main Rd, Yelahanka", 13.1163, 77.6368, "Specialty coffee, fresh sandwiches and desserts, a short walk from campus. Free Wi-Fi and plenty of seating.", hours="Mon-Sun, 8:00 am - 10:30 pm", image="/img/shop-cafe.jpg")
+    salon = _merchant(conn, o_salon, "Glow Unisex Salon", "salon", "Jakkur Main Rd, Bengaluru", 13.1122, 77.6301, "Unisex salon offering haircuts, colour, styling and skin care by trained stylists. Appointments recommended.", hours="Mon-Sat, 10:00 am - 8:00 pm", image="/img/shop-salon.jpg")
+    gym = _merchant(conn, o_gym, "FitZone Gym", "fitness", "Yelahanka New Town", 13.1031, 77.6012, "Air-conditioned gym with strength and cardio zones, personal training and morning yoga batches.", hours="Mon-Sun, 5:30 am - 10:00 pm", image="/img/shop-gym.jpg")
+    bake = _merchant(conn, o_bake, "Sweet Crumbs Bakery", "bakery", "Attur Layout, Yelahanka", 13.1055, 77.6190, "Neighbourhood bakery: cakes made to order, fresh breads and puffs baked every morning.", hours="Mon-Sun, 7:00 am - 9:00 pm", image="/img/deal-bakery2.jpg")
+    spice = _merchant(conn, o_new, "Spice Route Restaurant", "food", "Doddaballapur Rd, Kattigenahalli", 13.1190, 77.6410, "North Indian thali and biryani.", status="pending", hours="Mon-Sun, 11:30 am - 11:00 pm", image="/img/shop-restaurant.jpg")
     pizza = None  # placeholder for future merchants
 
-    d_coffee = _deal(conn, cafe, "Buy 1 Get 1 Free Cappuccino", "Two cappuccinos for the price of one, any weekday.", "cafe", "voucher", 120, 240, 40, -24, 72)
-    d_combo = _deal(conn, cafe, "Sandwich + Cold Coffee Combo", "Grilled veg sandwich with a cold coffee.", "cafe", "voucher", 149, 260, 25, -12, 4, age_h=3)  # ends in 4h: urgent
-    d_cake = _deal(conn, bake, "Chocolate Truffle Cake (500 g) 30% off", "Fresh baked, eggless option available.", "bakery", "voucher", 420, 600, 15, -48, 120, age_h=30)
-    d_puff = _deal(conn, bake, "Box of 6 Puffs", "Mix of veg and paneer puffs.", "bakery", "voucher", 99, 180, 60, -6, 48, age_h=2)
-    d_hair = _deal(conn, salon, "Haircut + Head Wash", "Includes style consultation. Appointment required.", "salon", "service", 199, 450, 30, -20, 96, age_h=10)
-    d_facial = _deal(conn, salon, "Deep Cleansing Facial", "60-minute facial. Appointment required.", "salon", "service", 599, 1200, 12, -8, 120, age_h=5)
-    d_gym = _deal(conn, gym, "1-Month Gym Membership", "All equipment + one trial personal-training session.", "fitness", "voucher", 999, 2000, 20, -30, 200, window=60, age_h=40)
-    d_yoga = _deal(conn, gym, "Yoga Class Pass (5 sessions)", "Morning batches. Book your slot after purchase.", "fitness", "service", 349, 700, 25, -10, 150, age_h=8)
-    d_pending = _deal(conn, cafe, "Weekend Brunch for Two", "Pancakes, eggs and two coffees.", "food", "voucher", 349, 700, 20, 0, 96, status="pending")
-    _deal(conn, cafe, "Cold Brew Tasting Flight (draft)", "A draft the merchant has not submitted yet.", "cafe", "voucher", 199, 320, 10, 0, 72, status="draft")
-    _deal(conn, bake, "Cupcake Dozen (ended)", "An old deal.", "bakery", "voucher", 299, 480, 10, -100, -10, status="ended", age_h=110)
+    d_coffee = _deal(conn, cafe, "Buy 1 Get 1 Free Cappuccino", "Two cappuccinos for the price of one, any weekday.", "cafe", "voucher", 120, 240, 40, -24, 72, image="/img/deal-cappuccino.jpg")
+    d_combo = _deal(conn, cafe, "Sandwich + Cold Coffee Combo", "Grilled veg sandwich with a cold coffee.", "cafe", "voucher", 149, 260, 25, -12, 4, age_h=3, image="/img/deal-sandwich.jpg")  # ends in 4h: urgent
+    d_cake = _deal(conn, bake, "Chocolate Truffle Cake (500 g) 30% off", "Fresh baked, eggless option available.", "bakery", "voucher", 420, 600, 15, -48, 120, age_h=30, image="/img/deal-cake.jpg")
+    d_puff = _deal(conn, bake, "Box of 6 Puffs", "Mix of veg and paneer puffs.", "bakery", "voucher", 99, 180, 60, -6, 48, age_h=2, image="/img/deal-puffs.jpg")
+    d_hair = _deal(conn, salon, "Haircut + Head Wash", "Includes style consultation. Appointment required.", "salon", "service", 199, 450, 30, -20, 96, age_h=10, image="/img/deal-haircut.jpg")
+    d_facial = _deal(conn, salon, "Deep Cleansing Facial", "60-minute facial. Appointment required.", "salon", "service", 599, 1200, 12, -8, 120, age_h=5, image="/img/deal-facial.jpg")
+    d_gym = _deal(conn, gym, "1-Month Gym Membership", "All equipment + one trial personal-training session.", "fitness", "voucher", 999, 2000, 20, -30, 200, window=60, age_h=40, image="/img/deal-gym.jpg")
+    d_yoga = _deal(conn, gym, "Yoga Class Pass (5 sessions)", "Morning batches. Book your slot after purchase.", "fitness", "service", 349, 700, 25, -10, 150, age_h=8, image="/img/deal-yoga.jpg")
+    d_pending = _deal(conn, cafe, "Weekend Brunch for Two", "Pancakes, eggs and two coffees.", "food", "voucher", 349, 700, 20, 0, 96, status="pending", image="/img/deal-brunch.jpg")
+    _deal(conn, cafe, "Cold Brew Tasting Flight (draft)", "A draft the merchant has not submitted yet.", "cafe", "voucher", 199, 320, 10, 0, 72, status="draft", image="/img/deal-coldbrew.jpg")
+    _deal(conn, bake, "Cupcake Dozen (ended)", "An old deal.", "bakery", "voucher", 299, 480, 10, -100, -10, status="ended", age_h=110, image="/img/deal-cake.jpg")
     for did in (d_hair, d_facial):
         _slots(conn, did, hours=(11, 15, 17))
     _slots(conn, d_yoga, days=(1, 2, 3, 4), hours=(6, 7, 8), cap=10)

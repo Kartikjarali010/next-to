@@ -1,4 +1,6 @@
 import { Ic } from "./icons";
+import Splash from "./Splash";
+import { ThemeProvider, ThemeToggle } from "./theme";
 import { ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, homeFor, useAuth } from "./auth";
@@ -8,6 +10,7 @@ import Signup, { MerchantSignup } from "./pages/Signup";
 import { isAppMode, loginPathFor, portalOf } from "./api";
 import Home from "./pages/consumer/Home";
 import DealDetail from "./pages/consumer/DealDetail";
+import Shop from "./pages/consumer/Shop";
 import Checkout from "./pages/consumer/Checkout";
 import Wallet from "./pages/consumer/Wallet";
 import VoucherDetail from "./pages/consumer/VoucherDetail";
@@ -41,7 +44,8 @@ function PhoneShell({ title, tabs }: { title: string; tabs: { to: string; icon: 
   const nav = useNavigate();
   return (
     <div className="phone"><div className="phone-in">
-      <div className="topbar"><Ic n="pin" size={22} /><h1 className="grow">{title}</h1>{user
+      <div className="topbar"><Ic n="pin" size={22} /><h1 className="grow">{title}</h1><ThemeToggle />
+        {user
           ? <><Link to="/profile" className="btn sm">{user.name.split(" ")[0]}</Link>
               <button className="btn sm" aria-label="Sign out" title="Sign out" onClick={() => { logout(); nav("/login"); }}><Ic n="logout" size={16} /></button></>
           : <Link to="/login" className="btn sm">Sign in</Link>}</div>
@@ -64,6 +68,7 @@ function WebShell({ title, links }: { title: string; links: [string, string, str
       <aside className="adm-side">
         <h2 className="row"><Ic n="pin" size={20} />{title}</h2>
         {links.map(([to, icon, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")}><Ic n={icon} size={18} />{label}</NavLink>)}
+        <ThemeToggle className="adm-theme" label />
         <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav(loginPathFor(portalOf())); }}><Ic n="logout" size={18} /> Sign out ({user?.name.split(" ")[0]})</a>
       </aside>
       <main className="adm-main"><div className="page"><Outlet /></div></main>
@@ -100,7 +105,8 @@ function WebOnly({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider><ToastProvider>
+      <ThemeProvider><AuthProvider><ToastProvider>
+        <Splash />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -111,6 +117,7 @@ export default function App() {
           <Route element={<Root />}>
             <Route index element={<Home />} />
             <Route path="deal/:id" element={<DealDetail />} />
+            <Route path="shop/:id" element={<Shop />} />
             <Route path="checkout/:id" element={<Guard roles={["consumer"]}><Checkout /></Guard>} />
             <Route path="wallet" element={<Guard roles={["consumer"]}><Wallet /></Guard>} />
             <Route path="voucher/:id" element={<Guard roles={["consumer"]}><VoucherDetail /></Guard>} />
@@ -137,7 +144,7 @@ export default function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </ToastProvider></AuthProvider>
+      </ToastProvider></AuthProvider></ThemeProvider>
     </BrowserRouter>
   );
 }

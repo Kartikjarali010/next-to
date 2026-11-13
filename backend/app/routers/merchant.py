@@ -37,6 +37,16 @@ class DealIn(BaseModel):
     starts_at: str
     ends_at: str
     redeem_window_days: int = Field(default=30, ge=1, le=365)
+    image_url: str | None = Field(default=None, max_length=300)
+
+
+def clean_image(u: str | None) -> str | None:
+    """Photos are served from /img/ (the built-in library) or an https:// URL; anything else is rejected."""
+    if not u: return None
+    u = u.strip()
+    if u.startswith("/img/") and ".." not in u or u.startswith("https://"):
+        return u
+    raise bad("Photo must be from the photo library or an https:// link", "bad_image")
 
 
 def _validate(d: DealIn):
@@ -46,12 +56,30 @@ def _validate(d: DealIn):
         raise bad("type must be voucher or service")
     if d.original_price < d.price:
         raise bad("Original price must be at least the deal price")
+    clean_image(d.image_url)
     try:
         s, e = parse(d.starts_at), parse(d.ends_at)
     except Exception:
         raise bad("starts_at/ends_at must be ISO timestamps")
     if e <= s:
         raise bad("ends_at must be after starts_at")
+
+
+class ProfileIn(BaseModel):
+    description: str = Field(default="", max_length=600)
+    hours: str = Field(default="", max_length=120)
+    image_url: str | None = Field(default=None, max_length=300)
+
+
+@router.put("/profile")
+def update_profile(body: ProfileIn, user=Depends(require("merchant")), conn=Depends(get_db)):
+    """The shop's public profile (about text, opening hours, cover photo) that shoppers see."""
+    m = my_merchant(conn, user)
+    img = clean_image(body.image_url)
+    with tx(conn):
+        conn.execute("UPDATE merchants SET description=?, hours=?, image_url=? WHERE id=?", (body.description.strip(), body.hours.strip(), img, m["id"]))
+        audit(conn, user["id"], "merchant.profile_updated", "merchant", m["id"], None, {"hours": body.hours, "image": img})
+    return one(conn.execute("SELECT * FROM merchants WHERE id=?", (m["id"],)))
 
 
 @router.get("/deals")
@@ -70,10 +98,10 @@ def deal_create(body: DealIn, user=Depends(require("merchant")), conn=Depends(ge
     _validate(body)
     with tx(conn):
         did = conn.execute(
-            "INSERT INTO deals(merchant_id,title,description,category,type,price,original_price,stock_total,stock_remaining,starts_at,ends_at,redeem_window_days,status,created_at) "
-            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?, 'draft',?)",
+            "INSERT INTO deals(merchant_id,title,description,category,type,price,original_price,stock_total,stock_remaining,starts_at,ends_at,redeem_window_days,status,image_url,created_at) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?, 'draft',?,?)",
             (m["id"], body.title.strip(), body.description, body.category, body.type, body.price, body.original_price,
-             body.stock_total, body.stock_total, body.starts_at, body.ends_at, body.redeem_window_days, now_iso())).lastrowid
+             body.stock_total, body.stock_total, body.starts_at, body.ends_at, body.redeem_window_days, clean_image(body.image_url), now_iso())).lastrowid
         audit(conn, user["id"], "deal.created", "deal", did, None, {"status": "draft"})
     return one(conn.execute("SELECT * FROM deals WHERE id=?", (did,)))
 
@@ -97,9 +125,9 @@ def deal_update(deal_id: int, body: DealIn, user=Depends(require("merchant")), c
         raise bad(f"Stock cannot be below units already sold/reserved ({sold})")
     with tx(conn):
         conn.execute(
-            "UPDATE deals SET title=?,description=?,category=?,type=?,price=?,original_price=?,stock_total=?,stock_remaining=?,starts_at=?,ends_at=?,redeem_window_days=?,status=? WHERE id=?",
+            "UPDATE deals SET title=?,description=?,category=?,type=?,price=?,original_price=?,stock_total=?,stock_remaining=?,starts_at=?,ends_at=?,redeem_window_days=?,status=?,image_url=? WHERE id=?",
             (body.title.strip(), body.description, body.category, body.type, body.price, body.original_price, body.stock_total,
-             body.stock_total - sold, body.starts_at, body.ends_at, body.redeem_window_days, new_status, deal_id))
+             body.stock_total - sold, body.starts_at, body.ends_at, body.redeem_window_days, new_status, clean_image(body.image_url), deal_id))
         audit(conn, user["id"], "deal.updated", "deal", deal_id, {"status": d["status"]}, {"status": new_status})
     return one(conn.execute("SELECT * FROM deals WHERE id=?", (deal_id,)))
 
