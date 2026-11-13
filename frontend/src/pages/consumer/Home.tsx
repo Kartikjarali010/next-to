@@ -1,3 +1,4 @@
+import { InstallBanner } from "../../install";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import { Empty, ErrorBox, Spinner, CATEGORY_ICON, useAsync } from "../../components";
@@ -41,6 +42,7 @@ export default function Home() {
   const r = res.data;
   return (
     <div className="stack">
+      <InstallBanner />
       <div className="hero">
         <div className="bold" style={{ fontSize: "1.1rem" }}>Deals next to you 📍</div>
         <div className="small" style={{ opacity: .9 }}>Pay by UPI · get a QR voucher · redeem in person</div>
