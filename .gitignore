@@ -12,3 +12,9 @@ __pycache__/
 .claude/
 ~$*
 docs/NextTo_Phase1_Presentation.pptx
+android-app/node_modules/
+android-app/android/.gradle/
+android-app/android/build/
+android-app/android/app/build/
+android-app/android/local.properties
+android-app/android/capacitor-cordova-android-plugins/

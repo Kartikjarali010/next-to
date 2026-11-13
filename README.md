@@ -33,3 +33,6 @@ On a phone (same Wi-Fi): open `http://<your-PC-LAN-IP>:8000` in Chrome (allow Py
 - **Backend:** Render (free) from `render.yaml` — create a Blueprint from this repo. Data is seeded on start and resets when the service restarts or redeploys (SQLite on an ephemeral disk); the free tier sleeps after idle, so the first request can take ~30-50 s.
 - **Frontend:** Vercel, project root `frontend/`. `frontend/vercel.json` proxies `/api/*` to the Render URL — edit the hostname there if your Render service is not named `nextto-api`.
 - Production would use PostgreSQL (Phase 2) instead of SQLite.
+
+## Android app (APK)
+Download: https://nextto.vercel.app/NextTo.apk (also `downloads/NextTo.apk` in this repo). Android will ask to allow installs from this source. It is a debug-signed Capacitor wrapper that opens the hosted app, so it needs internet. Rebuild: `cd android-app && npm install && npx cap sync android`, then in `android-app/android` run `gradlew assembleDebug` (Java 21, Android SDK; set `sdk.dir` in `local.properties`). The shopper web app is also an installable PWA: open the site in Chrome and tap **Install app**.

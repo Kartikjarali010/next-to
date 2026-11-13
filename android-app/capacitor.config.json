@@ -1,0 +1,7 @@
+{
+  "appId": "com.nextto.app",
+  "appName": "NextTo",
+  "webDir": "www",
+  "server": { "url": "https://nextto.vercel.app", "cleartext": false },
+  "android": { "allowMixedContent": false, "backgroundColor": "#0f766e" }
+}

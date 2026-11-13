@@ -47,6 +47,7 @@ export default function Login() {
         </div>
       </div>
       <div className="center small muted" style={{ marginTop: 10 }}><Link to="/">Browse deals without signing in</Link></div>
+      <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download>⬇️ Download the Android app (APK)</a></div>
     </div></div>
   );
 }
