@@ -78,7 +78,7 @@ export default function More() {
         <button key={t} className="card row" style={{ border: 0, textAlign: "left", cursor: "pointer", fontWeight: 600 }} onClick={() => setTab(t)}>
           <span style={{ fontSize: "1.4rem" }}>{ic}</span><span className="grow">{label}</span><span className="muted">›</span>
         </button>))}
-      <button className="btn danger block" onClick={() => { logout(); nav("/login"); }}>Sign out</button>
+      <button className="btn danger block" onClick={() => { logout(); nav("/merchant/login"); }}>Sign out</button>
     </div>
   );
 }

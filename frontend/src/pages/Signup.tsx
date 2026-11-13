@@ -4,11 +4,11 @@ import { api } from "../api";
 import { homeFor, useAuth } from "../auth";
 import { useAsync } from "../components";
 
-export default function Signup() {
+function SignupForm({ mode }: { mode: "consumer" | "merchant" }) {
   const { signup } = useAuth();
   const nav = useNavigate();
   const meta = useAsync(() => api<{ categories: string[]; areas: { name: string; lat: number; lng: number }[] }>("/meta"));
-  const [type, setType] = useState<"consumer" | "merchant">("consumer");
+  const type = mode;
   const [f, setF] = useState({ name: "", email: "", password: "" });
   const [b, setB] = useState({ name: "", category: "cafe", address: "", lat: "13.1147", lng: "77.6340", description: "", doc_note: "" });
   const [err, setErr] = useState("");
@@ -30,11 +30,7 @@ export default function Signup() {
 
   return (
     <div className="phone"><div className="phone-in" style={{ padding: 16 }}>
-      <h1 style={{ marginTop: 10 }}>Create your account</h1>
-      <div className="row" style={{ margin: "6px 0 12px" }}>
-        <button type="button" className={"chip " + (type === "consumer" ? "on" : "")} onClick={() => setType("consumer")}>I’m a shopper</button>
-        <button type="button" className={"chip " + (type === "merchant" ? "on" : "")} onClick={() => setType("merchant")}>I own a business</button>
-      </div>
+      <h1 style={{ marginTop: 10 }}>{type === "merchant" ? "Register your business" : "Create your account"}</h1>
       <form className="card stack" onSubmit={submit}>
         <div className="field"><label>Your name</label><input className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required minLength={2} /></div>
         <div className="field"><label>Email</label><input className="input" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} required /></div>
@@ -56,8 +52,11 @@ export default function Signup() {
         </>}
         {err && <div className="alert err">{err}</div>}
         <button className="btn block" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
-        <div className="center small">Already registered? <Link to="/login">Sign in</Link></div>
+        <div className="center small">Already registered? <Link to={type === "merchant" ? "/merchant/login" : "/login"}>Sign in</Link></div>
       </form>
     </div></div>
   );
 }
+
+export default function Signup() { return <SignupForm mode="consumer" />; }
+export function MerchantSignup() { return <SignupForm mode="merchant" />; }

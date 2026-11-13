@@ -1,9 +1,19 @@
 export class ApiError extends Error {
   constructor(public status: number, public code: string, message: string) { super(message); }
 }
-const KEY = "nextto_token";
-export const getToken = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
-export const setToken = (t: string | null) => { try { t ? localStorage.setItem(KEY, t) : localStorage.removeItem(KEY); } catch {} };
+/** Three separate portals share one site: shoppers at /, merchants at /merchant, admins at /admin.
+ *  Each keeps its own session so roles never mix. */
+export type Portal = "consumer" | "merchant" | "admin";
+export const portalOf = (path: string = window.location.pathname): Portal =>
+  path === "/admin" || path.startsWith("/admin/") ? "admin" : path === "/merchant" || path.startsWith("/merchant/") ? "merchant" : "consumer";
+export const loginPathFor = (p: Portal) => (p === "consumer" ? "/login" : `/${p}/login`);
+const KEY = (p: Portal) => "nextto_token_" + p;
+export const getToken = (p: Portal = portalOf()) => { try { return localStorage.getItem(KEY(p)); } catch { return null; } };
+export const setToken = (t: string | null, p: Portal = portalOf()) => { try { t ? localStorage.setItem(KEY(p), t) : localStorage.removeItem(KEY(p)); } catch {} };
+
+/** True inside the Android APK (user agent marker) or an installed PWA: only the shopper side is available there. */
+export const isAppMode = () =>
+  /NextToApp/.test(navigator.userAgent) || window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true;
 
 export async function api<T = any>(path: string, opts: { method?: string; body?: any; headers?: Record<string, string> } = {}): Promise<T> {
   const h: Record<string, string> = { ...(opts.headers || {}) };

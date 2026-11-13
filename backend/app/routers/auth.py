@@ -3,7 +3,7 @@ import re
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 
-from ..core import bad, conflict, current_user, hash_password, make_token, rate_limit, unauthorized, verify_password
+from ..core import bad, conflict, current_user, forbidden, hash_password, make_token, rate_limit, unauthorized, verify_password
 from ..db import audit, get_db, now_iso, one, points_balance, tx
 from ..ranking import CATEGORIES
 
@@ -32,6 +32,9 @@ class SignupIn(BaseModel):
 class LoginIn(BaseModel):
     email: str
     password: str
+    portal: str | None = None   # consumer | merchant | admin: each portal accepts only its own roles
+
+PORTAL_ROLES = {"consumer": {"consumer"}, "merchant": {"merchant", "merchant_applicant"}, "admin": {"admin"}}
 
 
 def user_out(conn, u: dict) -> dict:
@@ -83,6 +86,11 @@ def login(body: LoginIn, request: Request, conn=Depends(get_db)):
         raise unauthorized("Incorrect email or password")
     if u["suspended"]:
         raise unauthorized("This account is suspended")
+    if body.portal is not None:
+        if body.portal not in PORTAL_ROLES:
+            raise bad("Unknown portal")
+        if u["role"] not in PORTAL_ROLES[body.portal]:   # checked only after the password, so roles are not leaked
+            raise forbidden("This account cannot sign in here. Please use the correct sign-in page for your account.")
     return {"token": make_token(u), "user": user_out(conn, u)}
 
 

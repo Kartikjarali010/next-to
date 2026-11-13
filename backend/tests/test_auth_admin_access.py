@@ -201,3 +201,30 @@ def test_merchant_dashboard_stats(h):
 def test_validation_errors_use_common_error_shape(h):
     r = h.c.post("/api/auth/login", json={})
     assert r.status_code == 422 and set(r.json()["error"]) == {"code", "message"}
+
+
+# ---------------------------------------------------------------- separate sign-in portals
+def test_each_portal_accepts_only_its_own_role(h):
+    h.signup("shopper@t.dev")
+    h.make_merchant("shop@t.dev")
+    h.make_admin("boss@t.dev")
+    def login(email, portal):
+        return h.c.post("/api/auth/login", json={"email": email, "password": "secret1", "portal": portal}).status_code
+    assert login("shopper@t.dev", "consumer") == 200
+    assert login("shop@t.dev", "merchant") == 200
+    assert login("boss@t.dev", "admin") == 200
+    # wrong portal -> forbidden, for every combination
+    assert login("shop@t.dev", "consumer") == 403 and login("boss@t.dev", "consumer") == 403
+    assert login("shopper@t.dev", "merchant") == 403 and login("boss@t.dev", "merchant") == 403
+    assert login("shopper@t.dev", "admin") == 403 and login("shop@t.dev", "admin") == 403
+
+
+def test_portal_check_does_not_reveal_roles_to_wrong_password(h):
+    h.make_admin("boss@t.dev")
+    r = h.c.post("/api/auth/login", json={"email": "boss@t.dev", "password": "wrong-pass", "portal": "consumer"})
+    assert r.status_code == 401        # password is checked first; no role information leaks
+
+
+def test_unknown_portal_rejected(h):
+    h.signup("a@t.dev")
+    assert h.c.post("/api/auth/login", json={"email": "a@t.dev", "password": "secret1", "portal": "root"}).status_code == 400

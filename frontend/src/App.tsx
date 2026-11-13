@@ -2,8 +2,9 @@ import { ReactNode } from "react";
 import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, homeFor, useAuth } from "./auth";
 import { Spinner, ToastProvider } from "./components";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Login, { AdminLogin, MerchantLogin } from "./pages/Login";
+import Signup, { MerchantSignup } from "./pages/Signup";
+import { isAppMode, loginPathFor, portalOf } from "./api";
 import Home from "./pages/consumer/Home";
 import DealDetail from "./pages/consumer/DealDetail";
 import Checkout from "./pages/consumer/Checkout";
@@ -29,7 +30,7 @@ import AAudit from "./pages/admin/Audit";
 function Guard({ roles, children }: { roles: string[]; children: ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <Spinner />;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to={loginPathFor(portalOf())} replace />;
   if (!roles.includes(user.role)) return <Navigate to={homeFor(user)} replace />;
   return <>{children}</>;
 }
@@ -59,7 +60,7 @@ function WebShell({ title, links }: { title: string; links: [string, string, boo
       <aside className="adm-side">
         <h2>{title}</h2>
         {links.map(([to, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")}>{label}</NavLink>)}
-        <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav("/login"); }}>🚪 Sign out ({user?.name.split(" ")[0]})</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); logout(); nav(loginPathFor(portalOf())); }}>🚪 Sign out ({user?.name.split(" ")[0]})</a>
       </aside>
       <main className="adm-main"><div className="page"><Outlet /></div></main>
     </div>
@@ -84,8 +85,12 @@ function AdminShell() {
 function Root() {
   const { user, loading } = useAuth();
   if (loading) return <Spinner />;
-  if (user && user.role !== "consumer") return <Navigate to={homeFor(user)} replace />;
   return <ConsumerShell />;
+}
+
+/** The Android app and the installed phone app are shopper-only: business portals are not reachable from them. */
+function WebOnly({ children }: { children: ReactNode }) {
+  return isAppMode() ? <Navigate to="/" replace /> : <>{children}</>;
 }
 
 export default function App() {
@@ -95,6 +100,9 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/merchant/login" element={<WebOnly><MerchantLogin /></WebOnly>} />
+          <Route path="/merchant/signup" element={<WebOnly><MerchantSignup /></WebOnly>} />
+          <Route path="/admin/login" element={<WebOnly><AdminLogin /></WebOnly>} />
           {/* consumer: browsing deals is public; wallet/profile/checkout require login */}
           <Route element={<Root />}>
             <Route index element={<Home />} />
@@ -105,7 +113,7 @@ export default function App() {
             <Route path="rewards" element={<Guard roles={["consumer"]}><Rewards /></Guard>} />
             <Route path="profile" element={<Guard roles={["consumer"]}><Profile /></Guard>} />
           </Route>
-          <Route path="merchant" element={<Guard roles={["merchant", "merchant_applicant"]}><MerchantShell /></Guard>}>
+          <Route path="merchant" element={<WebOnly><Guard roles={["merchant", "merchant_applicant"]}><MerchantShell /></Guard></WebOnly>}>
             <Route index element={<MDashboard />} />
             <Route path="deals" element={<MDeals />} />
             <Route path="deals/new" element={<MDealForm />} />
@@ -114,7 +122,7 @@ export default function App() {
             <Route path="bookings" element={<MBookings />} />
             <Route path="more" element={<MMore />} />
           </Route>
-          <Route path="admin" element={<Guard roles={["admin"]}><AdminShell /></Guard>}>
+          <Route path="admin" element={<WebOnly><Guard roles={["admin"]}><AdminShell /></Guard></WebOnly>}>
             <Route index element={<AOverview />} />
             <Route path="merchants" element={<AMerchants />} />
             <Route path="deals" element={<ADeals />} />

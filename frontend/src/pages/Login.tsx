@@ -1,14 +1,25 @@
 import { FormEvent, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { isAppMode, Portal } from "../api";
 import { homeFor, useAuth } from "../auth";
 
-const DEMOS = [
-  ["Consumer", "kartik@demo.com", "demo123"],
-  ["Merchant", "cafe@demo.com", "demo123"],
-  ["Admin", "admin@nextto.dev", "admin123"],
-];
+const PORTALS: Record<Portal, { title: string; sub: string; demos: [string, string, string][]; signup?: string; icon: string }> = {
+  consumer: {
+    title: "NextTo", sub: "Deals next to you. Pay by UPI, redeem in person.", icon: "📍", signup: "/signup",
+    demos: [["Demo shopper", "kartik@demo.com", "demo123"], ["Demo shopper 2", "priya@demo.com", "demo123"]],
+  },
+  merchant: {
+    title: "NextTo Business", sub: "Publish deals, scan vouchers, track sales.", icon: "🏪", signup: "/merchant/signup",
+    demos: [["Demo café", "cafe@demo.com", "demo123"], ["Demo salon", "salon@demo.com", "demo123"], ["Pending business", "new@demo.com", "demo123"]],
+  },
+  admin: {
+    title: "NextTo Admin", sub: "Approvals, refunds, payouts and audit.", icon: "🛡️",
+    demos: [["Demo admin", "admin@nextto.dev", "admin123"]],
+  },
+};
 
-export default function Login() {
+function PortalLogin({ portal }: { portal: Portal }) {
+  const cfg = PORTALS[portal];
   const { user, login } = useAuth();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
@@ -28,9 +39,9 @@ export default function Login() {
   return (
     <div className="phone"><div className="phone-in" style={{ justifyContent: "center", padding: 20 }}>
       <div className="hero center" style={{ marginBottom: 18 }}>
-        <div style={{ fontSize: "2.6rem" }}>📍</div>
-        <h1 style={{ color: "#fff" }}>NextTo</h1>
-        <div>Deals next to you. Pay by UPI, redeem in person.</div>
+        <div style={{ fontSize: "2.6rem" }}>{cfg.icon}</div>
+        <h1 style={{ color: "#fff" }}>{cfg.title}</h1>
+        <div>{cfg.sub}</div>
       </div>
       <form className="card stack" onSubmit={submit}>
         <h2>Sign in</h2>
@@ -38,16 +49,22 @@ export default function Login() {
         <div className="field"><label>Password</label><input className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
         {err && <div className="alert err">{err}</div>}
         <button className="btn block" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
-        <div className="center small">New here? <Link to="/signup">Create an account</Link></div>
+        {cfg.signup && <div className="center small">New here? <Link to={cfg.signup}>Create an account</Link></div>}
       </form>
       <div className="card flat stack-s" style={{ marginTop: 14 }}>
         <div className="small muted bold">DEMO ACCOUNTS (tap to sign in)</div>
         <div className="row wrap">
-          {DEMOS.map(([label, em, pw]) => <button key={em} type="button" className="chip" onClick={() => submit(undefined, em, pw)}>{label}</button>)}
+          {cfg.demos.map(([label, em, pw]) => <button key={em} type="button" className="chip" onClick={() => submit(undefined, em, pw)}>{label}</button>)}
         </div>
       </div>
-      <div className="center small muted" style={{ marginTop: 10 }}><Link to="/">Browse deals without signing in</Link></div>
-      <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download>⬇️ Download the Android app (APK)</a></div>
+      {portal === "consumer" && <>
+        <div className="center small muted" style={{ marginTop: 10 }}><Link to="/">Browse deals without signing in</Link></div>
+        {!isAppMode() && <div className="center small" style={{ marginTop: 8 }}><a href="/NextTo.apk" download>⬇️ Download the Android app (APK)</a></div>}
+      </>}
     </div></div>
   );
 }
+
+export default function Login() { return <PortalLogin portal="consumer" />; }
+export function MerchantLogin() { return <PortalLogin portal="merchant" />; }
+export function AdminLogin() { return <PortalLogin portal="admin" />; }
