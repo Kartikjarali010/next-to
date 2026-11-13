@@ -92,3 +92,7 @@ textarea.input{min-height:80px;resize:vertical}
 .btn svg{margin-right:2px}
 .adm-side a svg{flex:none;opacity:.9}
 .alert svg{margin-right:4px}
+
+/* inputs must never inherit light text from banners/heroes */
+.input,select.input,textarea.input,.hero input,.hero select{color:var(--ink);-webkit-text-fill-color:var(--ink);caret-color:var(--brand)}
+.input::placeholder,.hero input::placeholder{color:#94a3b8;-webkit-text-fill-color:#94a3b8;opacity:1}
