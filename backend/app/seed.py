@@ -53,7 +53,7 @@ def _buy(conn, user_id, deal_id, key, pay=True):
 def seed(conn):
     admin = _user(conn, "admin@nextto.dev", "NextTo Admin", "admin")
     kartik = _user(conn, "kartik@demo.com", "Kartik Jarali", "consumer")
-    priya = _user(conn, "priya@demo.com", "Priya Sharma", "consumer")
+    leah = _user(conn, "leah@demo.com", "Leah Chakarmakal", "consumer")
     _user(conn, "rahul@demo.com", "Rahul Nair", "consumer")
     o_cafe = _user(conn, "cafe@demo.com", "Anita (Brew & Bean)", "merchant")
     o_salon = _user(conn, "salon@demo.com", "Meera (Glow Salon)", "merchant")
@@ -87,9 +87,9 @@ def seed(conn):
     prov = get_provider()
     v1 = _buy(conn, kartik, d_coffee, "seed-kartik-coffee-1")
     v2 = _buy(conn, kartik, d_hair, "seed-kartik-hair-1")
-    v3 = _buy(conn, priya, d_cake, "seed-priya-cake-1")
-    v4 = _buy(conn, priya, d_gym, "seed-priya-gym-1")
-    v5 = _buy(conn, priya, d_puff, "seed-priya-puff-1")
+    v3 = _buy(conn, leah, d_cake, "seed-leah-cake-1")
+    v4 = _buy(conn, leah, d_gym, "seed-leah-gym-1")
+    v5 = _buy(conn, leah, d_puff, "seed-leah-puff-1")
     m_cafe = one(conn.execute("SELECT * FROM merchants WHERE id=?", (cafe,)))
     m_bake = one(conn.execute("SELECT * FROM merchants WHERE id=?", (bake,)))
     svc.redeem_voucher(conn, m_cafe, v1["code"])
@@ -97,9 +97,9 @@ def seed(conn):
     conn.execute("INSERT INTO reviews(voucher_id,consumer_id,merchant_id,rating,comment,created_at) VALUES(?,?,?,?,?,?)",
                  (v1["id"], kartik, cafe, 5, "Great coffee and quick service!", now_iso()))
     conn.execute("INSERT INTO reviews(voucher_id,consumer_id,merchant_id,rating,comment,created_at) VALUES(?,?,?,?,?,?)",
-                 (v3["id"], priya, bake, 4, "Cake was fresh and delicious.", now_iso()))
+                 (v3["id"], leah, bake, 4, "Cake was fresh and delicious.", now_iso()))
     # an open refund request for the admin queue
-    svc.request_refund(conn, {"id": priya}, v4["id"], "Changed my plans, cannot visit this month")
+    svc.request_refund(conn, {"id": leah}, v4["id"], "Changed my plans, cannot visit this month")
     # a service voucher with a booking
     slot = one(conn.execute("SELECT id FROM slots WHERE deal_id=? ORDER BY starts_at LIMIT 1", (d_hair,)))
     svc.create_booking(conn, {"id": kartik}, v2["id"], slot["id"])

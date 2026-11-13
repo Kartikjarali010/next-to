@@ -11,7 +11,7 @@ On a phone (same Wi-Fi): open `http://<your-PC-LAN-IP>:8000` in Chrome (allow Py
 | Role | Email | Password |
 |---|---|---|
 | Consumer | kartik@demo.com | demo123 |
-| Consumer | priya@demo.com | demo123 |
+| Consumer | leah@demo.com | demo123 |
 | Merchant (cafe, approved) | cafe@demo.com | demo123 |
 | Merchant (salon, approved) | salon@demo.com | demo123 |
 | Merchant (pending approval) | new@demo.com | demo123 |

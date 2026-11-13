@@ -7,7 +7,7 @@ import { homeFor, useAuth } from "../auth";
 const PORTALS: Record<Portal, { title: string; sub: string; demos: [string, string, string][]; signup?: string; icon: string }> = {
   consumer: {
     title: "NextTo", sub: "Deals next to you. Pay by UPI, redeem in person.", icon: "pin", signup: "/signup",
-    demos: [["Demo shopper", "kartik@demo.com", "demo123"], ["Demo shopper 2", "priya@demo.com", "demo123"]],
+    demos: [["Kartik", "kartik@demo.com", "demo123"], ["Leah", "leah@demo.com", "demo123"]],
   },
   merchant: {
     title: "NextTo Business", sub: "Publish deals, scan vouchers, track sales.", icon: "store", signup: "/merchant/signup",

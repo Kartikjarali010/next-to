@@ -1,6 +1,6 @@
 import { Ic } from "./icons";
 import { ReactNode } from "react";
-import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, NavLink, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { AuthProvider, homeFor, useAuth } from "./auth";
 import { Spinner, ToastProvider } from "./components";
 import Login, { AdminLogin, MerchantLogin } from "./pages/Login";
@@ -41,7 +41,10 @@ function PhoneShell({ title, tabs }: { title: string; tabs: { to: string; icon: 
   const nav = useNavigate();
   return (
     <div className="phone"><div className="phone-in">
-      <div className="topbar"><Ic n="pin" size={22} /><h1 className="grow">{title}</h1><button className="btn sm" onClick={() => { logout(); nav("/login"); }}>{user?.name.split(" ")[0]} · Sign out</button></div>
+      <div className="topbar"><Ic n="pin" size={22} /><h1 className="grow">{title}</h1>{user
+          ? <><Link to="/profile" className="btn sm">{user.name.split(" ")[0]}</Link>
+              <button className="btn sm" aria-label="Sign out" title="Sign out" onClick={() => { logout(); nav("/login"); }}><Ic n="logout" size={16} /></button></>
+          : <Link to="/login" className="btn sm">Sign in</Link>}</div>
       <div className="content"><Outlet /></div>
       <nav className="tabbar">{tabs.map((t) => <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => (isActive ? "active" : "")}><Ic n={t.icon} size={22} />{t.label}</NavLink>)}</nav>
     </div></div>

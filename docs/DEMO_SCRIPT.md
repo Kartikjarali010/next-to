@@ -15,7 +15,7 @@ Use three browser windows: **Shopper** at `/` (phone-width, or the Android app /
 | 7 | Shopper | **Wallet** > open the voucher. | Signed QR plus code. |
 | 8 | Merchant | **Redeem** > scan the QR (or type the code) > **Redeem**. | The shopper's voucher screen flips to **Redeemed** by itself. Scan again to show "already redeemed". |
 | 9 | Shopper | Leave a review with a tip, and pay the tip. | Points were credited at redemption. |
-| 10 | Admin | **Refunds**: approve or reject the pending request for Priya. | The voucher was frozen in `refund_pending`, so it could not be redeemed meanwhile. |
+| 10 | Admin | **Refunds**: approve or reject the pending request for Leah. | The voucher was frozen in `refund_pending`, so it could not be redeemed meanwhile. |
 | 11 | Admin | **Payouts** > Run settlement > Release. | 10% platform fee; refunded vouchers are never paid out. |
 | 12 | Admin | **Audit log**. | Every state change is recorded with before and after values. |
 
